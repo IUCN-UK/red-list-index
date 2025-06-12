@@ -1,10 +1,11 @@
 [project]
 name = "red-list-index"
 version = "0.1.0"
-description = "Add your description here"
+description = "IUCN Red List Index Python package"
 readme = "README.md"
 authors = [
-    { name = "Ian Townsend", email = "ian.townsend@gmail.com" }
+    { name = "Simon Tarr", email = "simon.tarr@iucn.org" },
+    { name = "Ian Townsend", email = "ian.townsend@iucn.org" }
 ]
 requires-python = ">=3.12"
 dependencies = []

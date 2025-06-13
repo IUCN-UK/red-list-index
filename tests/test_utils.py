@@ -192,7 +192,7 @@ def test_validate_input_dataframe_null_red_list_category_values():
         validate_input_dataframe(df)
 
 
-def test_validate_input_dataframe_null_red_list_category_values():
+def test_validate_input_dataframe_null_red_list_year_values():
     df = pl.DataFrame(
         {
             "id": [1, 2, 3],

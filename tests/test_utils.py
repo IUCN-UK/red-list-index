@@ -142,7 +142,7 @@ def test_validate_input_dataframe_invalid_dtype():
         validate_input_dataframe(df)
 
 
-def test_validate_input_dataframe_null_values():
+def test_validate_input_dataframe_null_id_values():
     df = pl.DataFrame(
         {
             "id": [1, None, 3],
@@ -158,7 +158,58 @@ def test_validate_input_dataframe_null_values():
         validate_input_dataframe(df)
 
 
-def test_validate_input_dataframe_invalid_values():
+def test_validate_input_dataframe_null_group_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", None],
+            "red_list_category": ["LC", "EN", "VU"],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'group' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_red_list_category_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", None],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'red_list_category' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_red_list_category_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", "EX"],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, None],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'year' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_invalid_red_list_category_values():
     df = pl.DataFrame(
         {
             "id": [1, 2, 3],

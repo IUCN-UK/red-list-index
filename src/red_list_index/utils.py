@@ -4,6 +4,21 @@ from .constants import INPUT_DATA_FRAME_SCHEMA
 
 
 def validate_input_dataframe(df: pl.DataFrame):
+    """
+    Validate that the provided input DataFrame conforms to the expected schema.
+
+    Checks performed:
+    1. Type: `df` must be a `polars.DataFrame`.
+    2. Presence: All columns in `INPUT_DATA_FRAME_SCHEMA` must exist.
+    3. Dtype: Each column must match its specified Polars dtype.
+    4. Not-null: Columns marked `not_null=True` must contain no nulls.
+    5. Allowed values: Columns with an `allowed` list must only contain those values.
+
+    Raises:
+        TypeError: If `df` is not a `polars.DataFrame`.
+        ValueError: If any required column is missing, has the wrong dtype,
+                    contains nulls where not permitted, or contains disallowed values.
+    """
     if not isinstance(df, pl.DataFrame):
         raise TypeError(
             f"Expected df to be a polars DataFrame, got {type(df).__name__}"

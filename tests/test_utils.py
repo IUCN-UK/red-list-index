@@ -173,6 +173,7 @@ def test_validate_input_dataframe_invalid_values():
         }
     )
     with pytest.raises(
-        ValueError, match="Column 'red_list_category' has invalid value"
+        ValueError,
+        match=r"Validation errors:\nColumn 'red_list_category' has invalid value\(s\) \['INVALID'\]; allowed: dict_keys\(\['LC', 'NT', 'VU', 'EN', 'CR', 'RE', 'CR\(PE\)', 'CR\(PEW\)', 'EW', 'EX', 'DD'\]\)",
     ):
         validate_input_dataframe(df)

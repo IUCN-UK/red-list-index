@@ -8,7 +8,10 @@ authors = [
     { name = "Ian Townsend", email = "ian.townsend@iucn.org" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.3.0",
+    "polars>=1.30.0",
+]
 
 [build-system]
 requires = ["hatchling"]

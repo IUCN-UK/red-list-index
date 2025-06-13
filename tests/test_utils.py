@@ -1,6 +1,7 @@
 import pytest
 import polars as pl
 import random
+
 from red_list_index.utils import validate_input_dataframe
 from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows

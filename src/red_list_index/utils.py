@@ -7,7 +7,7 @@ def validate_categories(categories, valid_categories):
         valid_categories (list): List of valid Red List categories.
 
     Returns:
-        bool: True if all Red List categories are valid, False otherwise.
+        list: Empty list if all Red List categories are valid, list of invalid Red List categories otherwise.
 
     Example:
         >>> categories = ["LC", "EN", "VU"]

@@ -13,6 +13,33 @@ def validate_input_dataframe(df: pl.DataFrame):
     if missing:
         raise ValueError(f"Missing required column(s): {', '.join(sorted(missing))}")
 
+    schema = df.schema
+    errors = []
+
+    for col, spec in INPUT_DATA_FRAME_SCHEMA.items():
+        actual_dtype = schema[col]
+        if actual_dtype != spec["dtype"]:
+            errors.append(
+                f"Column '{col}' must be {spec['dtype']!r}, got {actual_dtype!r}"
+            )
+
+        if spec.get("not_null", False):
+            nulls = df[col].null_count()
+            if nulls > 0:
+                errors.append(f"Column '{col}' contains {nulls} null value(s)")
+
+        if "allowed" in spec:
+            bad = df.select(pl.col(col)).filter(~pl.col(col).is_in(spec["allowed"]))
+            if bad.height > 0:
+                bad_vals = bad.unique().to_series().to_list()
+                errors.append(
+                    f"Column '{col}' has invalid value(s) {bad_vals}; "
+                    f"allowed: {spec['allowed']}"
+                )
+
+    if errors:
+        raise ValueError("Validation errors:\n" + "\n".join(errors))
+
 
 def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
     """

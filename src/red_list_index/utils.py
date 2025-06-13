@@ -2,6 +2,37 @@ import numpy as np
 import polars as pl
 
 
+def validate_input_dataframe(df: pl.DataFrame, weight_of_extinct=5):
+    if not isinstance(df, pl.DataFrame):
+        raise TypeError(
+            f"Expected df to be a polars DataFrame, got {type(df).__name__}"
+        )
+
+    if "weights" not in df.columns:
+        raise ValueError("Missing 'weights' column in DataFrame.")
+
+    if not df.schema["weights"] == pl.Int64:
+        raise TypeError(
+            f"'weights' column must be of integer type, got {df.schema['weights']}."
+        )
+
+    # Check the maximum value in 'weights' column is not greater than weight_of_extinct
+    # Only consider non-null weights for the checks
+    weights_non_null = df.filter(pl.col("weights").is_not_null())["weights"]
+    if len(weights_non_null) > 0:
+        max_weight = weights_non_null.max()
+        min_weight = weights_non_null.min()
+        if max_weight > weight_of_extinct:
+            raise ValueError(
+                f"Maximum value in 'weights' column ({max_weight}) "
+                f"is greater than weight_of_extinct ({weight_of_extinct})."
+            )
+        if min_weight < 0:
+            raise ValueError(
+                f"Minimum value in 'weights' column ({min_weight}) is less than zero."
+            )
+
+
 def validate_categories(categories, valid_categories):
     """
     Validate that all Red List categories in the input list are present in the supplied list of valid Red List categories.
@@ -34,36 +65,6 @@ def validate_categories(categories, valid_categories):
 
 
 def replace_data_deficient_rows(df: pl.DataFrame, weight_of_extinct=5):
-    if not isinstance(df, pl.DataFrame):
-        raise TypeError(
-            f"Expected df to be a polars DataFrame, got {type(df).__name__}"
-        )
-
-    if "weights" not in df.columns:
-        raise ValueError("Missing 'weights' column in DataFrame.")
-
-    weights_dtype = df.schema["weights"]
-    if not pl.datatypes.is_integer(weights_dtype):
-        raise TypeError(
-            f"'weights' column must be of integer type, got {weights_dtype}."
-        )
-
-    # Check the maximum value in 'weights' column is not greater than weight_of_extinct
-    # Only consider non-null weights for the checks
-    weights_non_null = df.filter(pl.col("weights").is_not_null())["weights"]
-    if len(weights_non_null) > 0:
-        max_weight = weights_non_null.max()
-        min_weight = weights_non_null.min()
-        if max_weight > weight_of_extinct:
-            raise ValueError(
-                f"Maximum value in 'weights' column ({max_weight}) "
-                f"is greater than weight_of_extinct ({weight_of_extinct})."
-            )
-        if min_weight < 0:
-            raise ValueError(
-                f"Minimum value in 'weights' column ({min_weight}) is less than zero."
-            )
-
     valid_weights = df.filter(pl.col("weights").is_not_null())["weights"].to_numpy()
 
     data_deficient_count = df.filter(pl.col("weights").is_null()).height

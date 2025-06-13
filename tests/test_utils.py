@@ -1,6 +1,6 @@
 import pytest
 import polars as pl
-
+import random
 from red_list_index.utils import validate_input_dataframe
 from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows
@@ -88,10 +88,18 @@ def test_validate_categories_categories_type_error():
 
 
 def test_replace_data_deficient_rows_valid_input():
-    df = pl.DataFrame({"weights": [1, 2, 3, None, None]})
+    # This test checks if the function correctly replaces all None values with
+    # values sampled from non-null values in the 'weights' column
+    valid_weights = random.sample([0, 1, 2, 3, 4, 5], 4)
+    data_deficient_weights = [None, None]
+
+    df = pl.DataFrame({"weights": valid_weights + data_deficient_weights})
     result = replace_data_deficient_rows(df, weight_of_extinct=5)
-    assert len(result) == 5
+    assert len(result) == 6
     assert all(isinstance(weight, int) for weight in result)
+    assert all(x in result for x in valid_weights), (
+        "Not all values in results are present in the initial valid_weights"
+    )
 
 
 def test_replace_data_deficient_rows_no_null_weights():

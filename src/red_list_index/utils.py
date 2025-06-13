@@ -1,8 +1,20 @@
 import numpy as np
 import polars as pl
+from .constants import INPUT_DATA_FRAME_SCHEMA
 
 
-def validate_input_dataframe(df: pl.DataFrame, weight_of_extinct=5):
+def validate_input_dataframe(df: pl.DataFrame):
+    if not isinstance(df, pl.DataFrame):
+        raise TypeError(
+            f"Expected df to be a polars DataFrame, got {type(df).__name__}"
+        )
+
+    missing = set(INPUT_DATA_FRAME_SCHEMA) - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required column(s): {', '.join(sorted(missing))}")
+
+
+def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
     """
     Validate the input Polars DataFrame is suitable for Red List calculations.
 
@@ -15,7 +27,7 @@ def validate_input_dataframe(df: pl.DataFrame, weight_of_extinct=5):
         ValueError: If the 'weights' column is missing, if any non-null weight is negative,
                     or if any non-null weight exceeds weight_of_extinct.
         TODO: Add "id","red_list_category","year", and "group" column presence and type checks.
-        
+
     Example:
         >>> import polars as pl
         >>> df = pl.DataFrame({'weights': [1, 2, 5, None]})

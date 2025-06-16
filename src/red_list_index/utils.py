@@ -1,6 +1,7 @@
 import numpy as np
 import polars as pl
 from .constants import INPUT_DATA_FRAME_SCHEMA
+from .constants import RED_LIST_CATEGORY_WEIGHTS
 
 
 def validate_input_dataframe(df: pl.DataFrame):
@@ -56,13 +57,12 @@ def validate_input_dataframe(df: pl.DataFrame):
         raise ValueError("Validation errors:\n" + "\n".join(errors))
 
 
-def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
+def validate_input_dataframe_weights(df: pl.DataFrame):
     """
     Validate the input Polars DataFrame is suitable for Red List calculations.
 
     Args:
         df (pl.DataFrame): Input DataFrame expected to contain a 'weights' column of integer type (pl.Int64).
-        weight_of_extinct (int, optional): Maximum allowed value in the 'weights' column (default is 5).
 
     Raises:
         TypeError: If df is not a Polars DataFrame or if the 'weights' column is not of integer type (pl.Int64).
@@ -73,11 +73,11 @@ def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
     Example:
         >>> import polars as pl
         >>> df = pl.DataFrame({'weights': [1, 2, 5, None]})
-        >>> validate_input_dataframe(df, weight_of_extinct=5)
+        >>> validate_input_dataframe(df)
         # No exception raised
 
-        >>> df_bad = pl.DataFrame({'weights': [1, 2, 7]})
-        >>> validate_input_dataframe(df_bad, weight_of_extinct=5)
+        >>> df_invalid = pl.DataFrame({'weights': [1, 2, 7]})
+        >>> validate_input_dataframe(df_invalid)
         ValueError: Maximum value in 'weights' column (7) is greater than weight_of_extinct (5).
     """
 
@@ -96,6 +96,7 @@ def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
 
     # Check the maximum value in 'weights' column is not greater than weight_of_extinct
     # Only consider non-null (non-DD) weights for the checks
+    weight_of_extinct = RED_LIST_CATEGORY_WEIGHTS["EX"]
     weights_non_null = df.filter(pl.col("weights").is_not_null())["weights"]
     if len(weights_non_null) > 0:
         max_weight = weights_non_null.max()
@@ -142,13 +143,12 @@ def validate_categories(categories, valid_categories):
     return invalid_categories
 
 
-def replace_data_deficient_rows(df: pl.DataFrame, weight_of_extinct=5):
+def replace_data_deficient_rows(df: pl.DataFrame):
     """
     Replace Data Deficient (DD) weights in the DataFrame with randomly sampled valid weights.
 
     Args:
         df (pl.DataFrame): A Polars DataFrame containing a 'weights' column, where some rows may have null (DD) values.
-        weight_of_extinct (int, optional): Placeholder argument (default is 5).
 
     Returns:
         list: A combined list containing all valid (non-null) weights and randomly sampled imputed weights for DD rows.

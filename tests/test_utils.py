@@ -11,37 +11,37 @@ from red_list_index.utils import replace_data_deficient_rows
 def test_validate_input_dataframe_weights_empty_dataframe():
     df = pl.DataFrame({"weights": ["a", "b", "c"]})
     with pytest.raises(TypeError, match="'weights' column must be of integer type"):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_input_dataframe_weights_missing_weights_column():
     df = pl.DataFrame({"other_column": [1, 2, 3]})
     with pytest.raises(ValueError, match="Missing 'weights' column in DataFrame."):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_input_dataframe_weights_invalid_weights_dtype():
     df = pl.DataFrame({"weights": ["a", "b", "c"]})
     with pytest.raises(TypeError, match="'weights' column must be of integer type"):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_input_dataframe_weights_max_weight_exceeds_limit():
     df = pl.DataFrame({"weights": [1, 2, 6, None]})
     with pytest.raises(ValueError, match="Maximum value in 'weights' column"):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_input_dataframe_weights_negative_weights():
     df = pl.DataFrame({"weights": [-1, 2, 3, None]})
     with pytest.raises(ValueError, match="Minimum value in 'weights' column"):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_input_dataframe_weights_invalid_dataframe_type():
     df = {"weights": [1, 2, 3, None]}
     with pytest.raises(TypeError, match="Expected df to be a polars DataFrame"):
-        validate_input_dataframe_weights(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df)
 
 
 def test_validate_categories_all_valid():
@@ -96,7 +96,7 @@ def test_replace_data_deficient_rows_valid_input():
     data_deficient_weights = [None, None]
 
     df = pl.DataFrame({"weights": valid_weights + data_deficient_weights})
-    result = replace_data_deficient_rows(df, weight_of_extinct=5)
+    result = replace_data_deficient_rows(df)
     assert len(result) == 6
     assert all(isinstance(weight, int) for weight in result)
     assert all(x in result for x in valid_weights), (
@@ -106,7 +106,7 @@ def test_replace_data_deficient_rows_valid_input():
 
 def test_replace_data_deficient_rows_no_null_weights():
     df = pl.DataFrame({"weights": [1, 2, 3, 4, 5]})
-    result = replace_data_deficient_rows(df, weight_of_extinct=5)
+    result = replace_data_deficient_rows(df)
     assert result == [1, 2, 3, 4, 5]
 
 

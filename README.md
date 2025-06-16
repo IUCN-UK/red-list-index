@@ -27,8 +27,11 @@ Initialize the package and run a Red List Index calculation
 
 To calculate Red List Index values over time for each comprehensive group from a CSV file, use the provided "calculate_global_RLI" script.
 ```
-
-
+➜ uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv rli_output.csv
+[✓] Reading from: ./tests/fixtures/species_red_list_category_list.csv
+[✓] Adding 'weights' column to DataFrame
+[✓] Validating input DataFrame
+[✓] Saving results to: rli_output.csv
 ```
 
 

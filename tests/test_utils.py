@@ -9,6 +9,7 @@ from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows
 from red_list_index.utils import add_weights_column
 from red_list_index.utils import calculate_rli_for
+from red_list_index.utils import interpolate_rli_for_missing_years
 
 from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 
@@ -283,7 +284,6 @@ def test_calculate_rli_for_valid_input():
 
     result = calculate_rli_for(df, number_of_repetitions=3)
 
-    print(result)
     assert result == {
         "rli": np.float64(0.7333333333333334),
         "qn_95": np.float64(0.7333333333333334),
@@ -321,3 +321,141 @@ def test_calculate_rli_for_valid_input_with_null_dd_values():
             "group_sample_sizes": {"group": "Bird", "count": 3},
         },
     ]
+
+
+def test_interpolate_rli_for_missing_years_valid_input():
+    rli_df = pl.DataFrame(
+        {
+            "year": [2000, 2002, 2004, 2001, 2003],
+            "group": ["Bird", "Bird", "Bird", "Mammal", "Mammal"],
+            "rli": [0.5, 0.6, 0.7, 0.8, 0.9],
+            "qn_05": [0.4, 0.5, 0.6, 0.7, 0.8],
+            "qn_95": [0.6, 0.7, 0.8, 0.9, 1.0],
+            "n": [1, 2, 3, 4, 5],
+            "group_sample_sizes": [
+                [{"group": "Bird", "count": 20}],
+                [{"group": "Bird", "count": 30}],
+                [{"group": "Bird", "count": 40}],
+                [{"group": "Mammal", "count": 50}],
+                [{"group": "Mammal", "count": 60}],
+            ],
+        }
+    )
+
+    expected = pl.DataFrame(
+        {
+            "year": [2000, 2001, 2002, 2003, 2004, 2001, 2002, 2003],
+            "group": [
+                "Bird",
+                "Bird",
+                "Bird",
+                "Bird",
+                "Bird",
+                "Mammal",
+                "Mammal",
+                "Mammal",
+            ],
+            "rli": [
+                0.5,
+                0.55,
+                0.6,
+                0.6499999999999999,
+                0.7,
+                0.8,
+                0.8500000000000001,
+                0.9,
+            ],
+            "qn_05": [0.4, 0.45, 0.5, 0.55, 0.6, 0.7, 0.75, 0.8],
+            "qn_95": [0.6, 0.6499999999999999, 0.7, 0.75, 0.8, 0.9, 0.95, 1.0],
+            "n": [1, 1, 2, 2, 3, 4, 4, 5],
+            "group_sample_sizes": [
+                [{"group": "Bird", "count": 20}],
+                [{"group": "Bird", "count": 20}],
+                [{"group": "Bird", "count": 30}],
+                [{"group": "Bird", "count": 30}],
+                [{"group": "Bird", "count": 40}],
+                [{"group": "Mammal", "count": 50}],
+                [{"group": "Mammal", "count": 50}],
+                [{"group": "Mammal", "count": 60}],
+            ],
+        }
+    )
+
+    result = interpolate_rli_for_missing_years(rli_df).sort(["group", "year"])
+
+    assert result.shape == expected.shape, (
+        f"Expected shape {expected.shape}, but got {result.shape}"
+    )
+    assert result["year"].to_list() == expected["year"].to_list()
+    assert result["group"].to_list() == expected["group"].to_list()
+    assert result["rli"].to_list() == expected["rli"].to_list()
+    assert result["qn_05"].to_list() == expected["qn_05"].to_list()
+    assert result["qn_95"].to_list() == expected["qn_95"].to_list()
+    assert result["n"].to_list() == expected["n"].to_list()
+    assert (
+        result["group_sample_sizes"].to_list()
+        == expected["group_sample_sizes"].to_list()
+    )
+
+    # def test_interpolate_rli_for_missing_years_empty_dataframe():
+    #   rli_df = pl.DataFrame(
+    #     {
+    #       "group": [],
+    #       "year": [],
+    #       "rli": [],
+    #       "qn_05": [],
+    #       "qn_95": [],
+    #       "n": [],
+    #       "group_sample_sizes": [],
+    #     }
+    #   )
+
+    #   result = interpolate_rli_for_missing_years(rli_df)
+
+    #   assert result.is_empty()
+
+    # def test_interpolate_rli_for_missing_years_single_group():
+    #   rli_df = pl.DataFrame(
+    #     {
+    #       "group": ["Bird", "Bird"],
+    #       "year": [2000, 2002],
+    #       "rli": [0.5, 0.7],
+    #       "qn_05": [0.4, 0.6],
+    #       "qn_95": [0.6, 0.8],
+    #       "n": [1, 2],
+    #       "group_sample_sizes": [{"Bird": 10}, {"Bird": 20}],
+    #     }
+    #   )
+
+    #   result = interpolate_rli_for_missing_years(rli_df)
+
+    #   expected = pl.DataFrame(
+    #     {
+    #       "group": ["Bird", "Bird", "Bird"],
+    #       "year": [2000, 2001, 2002],
+    #       "rli": [0.5, 0.6, 0.7],
+    #       "qn_05": [0.4, 0.5, 0.6],
+    #       "qn_95": [0.6, 0.7, 0.8],
+    #       "n": [1, 1, 2],
+    #       "group_sample_sizes": [{"Bird": 10}, {"Bird": 10}, {"Bird": 20}],
+    #     }
+    #   )
+
+    #   assert result.frame_equal(expected)
+
+    # def test_interpolate_rli_for_missing_years_no_missing_years():
+    #   rli_df = pl.DataFrame(
+    #     {
+    #       "group": ["Bird", "Bird", "Bird"],
+    #       "year": [2000, 2001, 2002],
+    #       "rli": [0.5, 0.6, 0.7],
+    #       "qn_05": [0.4, 0.5, 0.6],
+    #       "qn_95": [0.6, 0.7, 0.8],
+    #       "n": [1, 2, 3],
+    #       "group_sample_sizes": [{"Bird": 10}, {"Bird": 20}, {"Bird": 30}],
+    #     }
+    #   )
+
+    #   result = interpolate_rli_for_missing_years(rli_df)
+
+    #   assert result.frame_equal(rli_df)

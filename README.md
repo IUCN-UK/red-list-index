@@ -25,6 +25,13 @@ Initialize the package and run a Red List Index calculation
 0.4
 ```
 
+To calculate Red List Index values over time for each comprehensive group from a CSV file, use the provided "calculate_global_RLI" script.
+```
+
+
+```
+
+
 ## Development
 
 Run tests with 

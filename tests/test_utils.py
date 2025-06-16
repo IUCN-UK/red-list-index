@@ -3,44 +3,45 @@ import polars as pl
 import random
 
 from red_list_index.utils import validate_input_dataframe
+from red_list_index.utils import validate_input_dataframe_weights
 from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows
 
 
-def test_validate_input_dataframe_empty_dataframe():
+def test_validate_input_dataframe_weights_empty_dataframe():
     df = pl.DataFrame({"weights": ["a", "b", "c"]})
     with pytest.raises(TypeError, match="'weights' column must be of integer type"):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
-def test_validate_input_dataframe_missing_weights_column():
+def test_validate_input_dataframe_weights_missing_weights_column():
     df = pl.DataFrame({"other_column": [1, 2, 3]})
     with pytest.raises(ValueError, match="Missing 'weights' column in DataFrame."):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
-def test_validate_input_dataframe_invalid_weights_dtype():
+def test_validate_input_dataframe_weights_invalid_weights_dtype():
     df = pl.DataFrame({"weights": ["a", "b", "c"]})
     with pytest.raises(TypeError, match="'weights' column must be of integer type"):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
-def test_validate_input_dataframe_max_weight_exceeds_limit():
+def test_validate_input_dataframe_weights_max_weight_exceeds_limit():
     df = pl.DataFrame({"weights": [1, 2, 6, None]})
     with pytest.raises(ValueError, match="Maximum value in 'weights' column"):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
-def test_validate_input_dataframe_negative_weights():
+def test_validate_input_dataframe_weights_negative_weights():
     df = pl.DataFrame({"weights": [-1, 2, 3, None]})
     with pytest.raises(ValueError, match="Minimum value in 'weights' column"):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
-def test_validate_input_dataframe_invalid_dataframe_type():
+def test_validate_input_dataframe_weights_invalid_dataframe_type():
     df = {"weights": [1, 2, 3, None]}
     with pytest.raises(TypeError, match="Expected df to be a polars DataFrame"):
-        validate_input_dataframe(df, weight_of_extinct=5)
+        validate_input_dataframe_weights(df, weight_of_extinct=5)
 
 
 def test_validate_categories_all_valid():
@@ -107,3 +108,123 @@ def test_replace_data_deficient_rows_no_null_weights():
     df = pl.DataFrame({"weights": [1, 2, 3, 4, 5]})
     result = replace_data_deficient_rows(df, weight_of_extinct=5)
     assert result == [1, 2, 3, 4, 5]
+
+
+def test_validate_input_dataframe_invalid_type():
+    df = {"column1": [1, 2, 3]}
+    with pytest.raises(TypeError, match="Expected df to be a polars DataFrame"):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_missing_columns():
+    df = pl.DataFrame({"column1": [1, 2, 3]})
+    with pytest.raises(
+        ValueError,
+        match=r"Missing required column\(s\): group, id, red_list_category, weights, year",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_invalid_dtype():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", "VU"],
+            "weights": [1.5, 2.5, 3.5],  # Invalid weights dtype, needs to be Int64
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'weights' must be Int64, got Float64",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_id_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, None, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", "VU"],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError, match=r"Validation errors:\nColumn 'id' contains 1 null value\(s\)"
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_group_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", None],
+            "red_list_category": ["LC", "EN", "VU"],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'group' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_red_list_category_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", None],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'red_list_category' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_null_red_list_year_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": ["LC", "EN", "EX"],
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, None],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'year' contains 1 null value\(s\)",
+    ):
+        validate_input_dataframe(df)
+
+
+def test_validate_input_dataframe_invalid_red_list_category_values():
+    df = pl.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "group": ["A", "B", "C"],
+            "red_list_category": [
+                "LC",
+                "INVALID",
+                "VU",
+            ],  # Invalid Red List category value
+            "weights": [1, 2, 3],
+            "year": [2020, 2021, 2022],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Validation errors:\nColumn 'red_list_category' has invalid value\(s\) \['INVALID'\]; allowed: dict_keys\(\['LC', 'NT', 'VU', 'EN', 'CR', 'RE', 'CR\(PE\)', 'CR\(PEW\)', 'EW', 'EX', 'DD'\]\)",
+    ):
+        validate_input_dataframe(df)

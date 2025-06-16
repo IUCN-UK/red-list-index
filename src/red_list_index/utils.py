@@ -1,8 +1,62 @@
 import numpy as np
 import polars as pl
+from .constants import INPUT_DATA_FRAME_SCHEMA
 
 
-def validate_input_dataframe(df: pl.DataFrame, weight_of_extinct=5):
+def validate_input_dataframe(df: pl.DataFrame):
+    """
+    Validate that the provided input DataFrame conforms to the expected schema.
+
+    Checks performed:
+    1. Type: `df` must be a `polars.DataFrame`.
+    2. Presence: All columns in `INPUT_DATA_FRAME_SCHEMA` must exist.
+    3. Dtype: Each column must match its specified Polars dtype.
+    4. Not-null: Columns marked `not_null=True` must contain no nulls.
+    5. Allowed values: Columns with an `allowed` list must only contain those values.
+
+    Raises:
+        TypeError: If `df` is not a `polars.DataFrame`.
+        ValueError: If any required column is missing, has the wrong dtype,
+                    contains nulls where not permitted, or contains disallowed values.
+    """
+    if not isinstance(df, pl.DataFrame):
+        raise TypeError(
+            f"Expected df to be a polars DataFrame, got {type(df).__name__}"
+        )
+
+    missing = set(INPUT_DATA_FRAME_SCHEMA) - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required column(s): {', '.join(sorted(missing))}")
+
+    schema = df.schema
+    errors = []
+
+    for col, spec in INPUT_DATA_FRAME_SCHEMA.items():
+        actual_dtype = schema[col]
+        if actual_dtype != spec["dtype"]:
+            errors.append(
+                f"Column '{col}' must be {spec['dtype']!r}, got {actual_dtype!r}"
+            )
+
+        if spec.get("not_null", False):
+            nulls = df[col].null_count()
+            if nulls > 0:
+                errors.append(f"Column '{col}' contains {nulls} null value(s)")
+
+        if "allowed" in spec:
+            bad = df.select(pl.col(col)).filter(~pl.col(col).is_in(spec["allowed"]))
+            if bad.height > 0:
+                bad_vals = bad.unique().to_series().to_list()
+                errors.append(
+                    f"Column '{col}' has invalid value(s) {bad_vals}; "
+                    f"allowed: {spec['allowed']}"
+                )
+
+    if errors:
+        raise ValueError("Validation errors:\n" + "\n".join(errors))
+
+
+def validate_input_dataframe_weights(df: pl.DataFrame, weight_of_extinct=5):
     """
     Validate the input Polars DataFrame is suitable for Red List calculations.
 
@@ -15,7 +69,7 @@ def validate_input_dataframe(df: pl.DataFrame, weight_of_extinct=5):
         ValueError: If the 'weights' column is missing, if any non-null weight is negative,
                     or if any non-null weight exceeds weight_of_extinct.
         TODO: Add "id","red_list_category","year", and "group" column presence and type checks.
-        
+
     Example:
         >>> import polars as pl
         >>> df = pl.DataFrame({'weights': [1, 2, 5, None]})

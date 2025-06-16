@@ -17,6 +17,8 @@ from red_list_index.utils import (
     build_global_red_list_indices,
     plot_global_rli,
     interpolate_rli_for_missing_years,
+    extrapolate_trends_for,
+    calculate_aggregate_for,
 )
 
 
@@ -82,6 +84,17 @@ def main() -> None:
         print("[✓] Interpolate RLI for missing years")
     except Exception as e:
         print(f"[✗] Interpolate RLI for missing years - {e}")
+        sys.exit(1)
+
+    try:
+        rli_df_extrapolated = extrapolate_trends_for(rli_df)
+        rli_df_aggregated = calculate_aggregate_for(rli_df_extrapolated)
+
+        rli_df = pl.concat([rli_df, rli_df_aggregated], how="vertical")
+
+        print("[✓] Aggregate RLI")
+    except Exception as e:
+        print(f"[✗] Aggregate RLI - {e}")
         sys.exit(1)
 
     try:

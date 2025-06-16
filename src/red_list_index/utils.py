@@ -367,3 +367,60 @@ def interpolate_rli_for_missing_years(rli_df):
         )
         df_list.append(df_full)
     return pl.concat(df_list)
+
+
+def extrapolate_trends_for(trends_df):
+    df_full_extrapolated = pl.DataFrame(
+        {
+            "year": pl.Series([], dtype=pl.Int64),
+            "rli": pl.Series([], dtype=pl.Float64),
+            "group": pl.Series([], dtype=pl.Utf8),
+        }
+    )
+
+    groups = trends_df.select("group").unique()["group"].to_list()
+
+    # Get full year range across all groups
+    all_years = trends_df.select(["year"]).unique().sort("year")
+
+    for group in groups:
+        group_df = trends_df.filter(pl.col("group") == group).select(["year", "rli"])
+
+        slope, intercept = np.polyfit(
+            group_df["year"].to_numpy(), group_df["rli"].to_numpy(), deg=1
+        )
+
+        full_group_df = all_years.with_columns(
+            [
+                (pl.col("year") * slope + intercept)
+                .clip(lower_bound=0.0, upper_bound=1.0)
+                .alias("rli"),
+                pl.lit(group).alias("group"),
+            ]
+        )
+
+        df_full_extrapolated = df_full_extrapolated.vstack(full_group_df)
+
+    return df_full_extrapolated
+
+
+def calculate_aggregate_for(df_rli_data):
+    df_rli_extrapolated = extrapolate_trends_for(df_rli_data)
+    return calculate_aggregate_from(df_rli_extrapolated)
+
+
+def calculate_aggregate_from(df_rli_extrapolated_data):
+    return (
+        df_rli_extrapolated_data.sort("year")
+        .group_by("year")
+        .agg(
+            [
+                pl.lit("Aggregate").alias("group"),
+                pl.mean("rli").alias("rli"),
+                pl.lit(None).alias("qn_95"),
+                pl.lit(None).alias("qn_05"),
+                pl.lit(None).alias("n"),
+                pl.lit(None).alias("group_sample_sizes"),
+            ]
+        )
+    )

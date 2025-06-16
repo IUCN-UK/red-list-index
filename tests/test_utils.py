@@ -1,5 +1,6 @@
 import pytest
 import polars as pl
+import numpy as np
 import random
 
 from red_list_index.utils import validate_input_dataframe
@@ -7,6 +8,8 @@ from red_list_index.utils import validate_input_dataframe_weights
 from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows
 from red_list_index.utils import add_weights_column
+from red_list_index.utils import calculate_rli_for
+
 from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 
 
@@ -273,3 +276,48 @@ def test_add_weights_column_missing_red_list_category_column():
         ValueError, match="Input DataFrame must contain a 'red_list_category' column"
     ):
         add_weights_column(df)
+
+
+def test_calculate_rli_for_valid_input():
+    df = pl.DataFrame({"group": ["Bird", "Bird", "Bird"], "weights": [1, 2, 1]})
+
+    result = calculate_rli_for(df, number_of_repetitions=3)
+
+    print(result)
+    assert result == {
+        "rli": np.float64(0.7333333333333334),
+        "qn_95": np.float64(0.7333333333333334),
+        "qn_05": np.float64(0.7333333333333334),
+        "n": 3,
+        "group_sample_sizes": {"group": "Bird", "count": 3},
+    }
+
+
+def test_calculate_rli_for_valid_input_with_null_dd_values():
+    df = pl.DataFrame({"group": ["Bird", "Bird", "Bird"], "weights": [1, 2, None]})
+
+    result = calculate_rli_for(df, number_of_repetitions=2)
+
+    assert result in [
+        {
+            "rli": np.float64(0.7333333333333334),
+            "qn_95": np.float64(0.7333333333333334),
+            "qn_05": np.float64(0.7333333333333334),
+            "n": 2,
+            "group_sample_sizes": {"group": "Bird", "count": 3},
+        },
+        {
+            "rli": np.float64(0.6666666666666667),
+            "qn_95": np.float64(0.6666666666666667),
+            "qn_05": np.float64(0.6666666666666667),
+            "n": 2,
+            "group_sample_sizes": {"group": "Bird", "count": 3},
+        },
+        {
+            "rli": np.float64(0.7000000000000001),
+            "qn_95": np.float64(0.7300000000000001),
+            "qn_05": np.float64(0.67),
+            "n": 2,
+            "group_sample_sizes": {"group": "Bird", "count": 3},
+        },
+    ]

@@ -16,6 +16,7 @@ from red_list_index.utils import (
     add_weights_column,
     build_global_red_list_indices,
     plot_global_rli,
+    interpolate_rli_for_missing_years,
 )
 
 
@@ -76,6 +77,14 @@ def main() -> None:
         sys.exit(1)
 
     try:
+        rli_df = interpolate_rli_for_missing_years(rli_df)
+
+        print("[✓] Interpolate RLI for missing years")
+    except Exception as e:
+        print(f"[✗] Interpolate RLI for missing years - {e}")
+        sys.exit(1)
+
+    try:
         # Ensure 'group_sample_sizes' is cast to string for CSV output
         rli_df = rli_df.with_columns(pl.col("group_sample_sizes").cast(pl.Utf8))
         rli_df.write_csv(output_file)
@@ -86,13 +95,11 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        plot_global_rli(rli_df, output_file.replace('.csv', '.png'))
+        plot_global_rli(rli_df, output_file.replace(".csv", ".png"))
         print(f"[✓] Saving plot to: {output_file.replace('.csv', '.png')}")
     except Exception as e:
         print(f"[✗] Saving plot to: {output_file.replace('.csv', '.png')} - {e}")
         sys.exit(1)
-
-
 
 
 if __name__ == "__main__":

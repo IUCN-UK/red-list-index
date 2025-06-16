@@ -1,5 +1,8 @@
 import numpy as np
 import polars as pl
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 from .constants import INPUT_DATA_FRAME_SCHEMA
 from .constants import RED_LIST_CATEGORY_WEIGHTS
 from red_list_index.calculate import Calculate
@@ -276,3 +279,35 @@ def build_global_red_list_indices(df, number_of_repetitions=1):
 
             rli_df.append({**{"group": group, "year": year}, **group_year_results})
     return pl.DataFrame(rli_df)
+
+
+def plot_global_rli(rli_df, filename="global_rli.png"):
+    """
+    Plots the global RLI by group over time using Seaborn and saves the plot to a file.
+
+    Args:
+        rli_df (pl.DataFrame): Input Polars DataFrame with columns 'group', 'year', 'rli', 'qn_05', 'qn_95'.
+        filename (str): The filename to save the plot (default: 'global_rli.png').
+    """
+    # Convert to pandas for Seaborn/Matplotlib
+    pdf = rli_df.to_pandas()
+
+    # Set Seaborn style
+    sns.set(style="whitegrid")
+
+    plt.figure(figsize=(8, 5))
+
+    # Plot each group
+    groups = pdf["group"].unique()
+    for group in groups:
+        sub = pdf[pdf["group"] == group]
+        plt.plot(sub["year"], sub["rli"], label=group, lw=0.5)  # No marker
+        plt.fill_between(sub["year"], sub["qn_05"], sub["qn_95"], alpha=0.2)
+
+    plt.xlabel("Year")
+    plt.ylabel("RLI")
+    plt.title("RLI by Group Over Time")
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+    plt.tight_layout()
+    plt.savefig(filename, dpi=300)
+    plt.close()  # Close the figure to avoid display in notebooks

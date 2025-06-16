@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ['polars','numpy']
+# dependencies = ['polars','numpy','seaborn','matplotlib','pyarrow']
 # ///
 
 import argparse
@@ -15,6 +15,7 @@ from red_list_index.utils import (
     validate_input_dataframe,
     add_weights_column,
     build_global_red_list_indices,
+    plot_global_rli,
 )
 
 
@@ -83,6 +84,15 @@ def main() -> None:
     except Exception as e:
         print(f"[✗] Saving results to: {output_file} - {e}")
         sys.exit(1)
+
+    try:
+        plot_global_rli(rli_df, output_file.replace('.csv', '.png'))
+        print(f"[✓] Saving plot to: {output_file.replace('.csv', '.png')}")
+    except Exception as e:
+        print(f"[✗] Saving plot to: {output_file.replace('.csv', '.png')} - {e}")
+        sys.exit(1)
+
+
 
 
 if __name__ == "__main__":

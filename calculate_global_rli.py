@@ -11,9 +11,7 @@ from pathlib import Path
 # Add 'src' directory to the module search path
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
-from red_list_index.calculate import Calculate
 from red_list_index.utils import validate_input_dataframe, add_weights_column
-from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 
 
 def main() -> None:
@@ -37,14 +35,14 @@ def main() -> None:
 
     try:
         df = add_weights_column(df)
-        print(f"[✓] Adding 'weights' column to DataFrame")
+        print("[✓] Adding 'weights' column to DataFrame")
     except Exception as e:
         print(f"[✗] Adding 'weights' column to DataFrame - {e}")
         sys.exit(1)
 
     try:
         validate_input_dataframe(df)
-        print(f"[✓] Validating input DataFrame")
+        print("[✓] Validating input DataFrame")
     except Exception as e:
         print(f"[✗] Validating input DataFrame - {e}")
         sys.exit(1)

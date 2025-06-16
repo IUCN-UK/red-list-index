@@ -410,6 +410,28 @@ def calculate_aggregate_for(df_rli_data):
 
 
 def calculate_aggregate_from(df_rli_extrapolated_data):
+    """
+    Aggregates data from a DataFrame by year and calculates summary statistics.
+
+    This function takes a DataFrame containing extrapolated Red List Index (RLI) data,
+    sorts it by the "year" column, groups the data by "year", and computes aggregate
+    statistics for each year. The resulting DataFrame includes the following columns:
+    - "group": A constant value "Aggregate" for all rows.
+    - "rli": The mean value of the "rli" column for each year.
+    - "qn_95": A placeholder column with None values.
+    - "qn_05": A placeholder column with None values.
+    - "n": A placeholder column with None values.
+    - "group_sample_sizes": A placeholder column with None values.
+    Columns with None values are added so the dataframe remains consistent and joinable to
+    the dataframe containing comprehensive group RLI's.
+
+    Args:
+        df_rli_extrapolated_data (polars.DataFrame): A DataFrame containing extrapolated
+            RLI data with at least a "year" column and an "rli" column.
+
+    Returns:
+        polars.DataFrame: A DataFrame with aggregated data grouped by year.
+    """
     return (
         df_rli_extrapolated_data.sort("year")
         .group_by("year")

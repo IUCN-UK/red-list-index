@@ -6,6 +6,8 @@ from red_list_index.utils import validate_input_dataframe
 from red_list_index.utils import validate_input_dataframe_weights
 from red_list_index.utils import validate_categories
 from red_list_index.utils import replace_data_deficient_rows
+from red_list_index.utils import add_weights_column
+from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 
 
 def test_validate_input_dataframe_weights_empty_dataframe():
@@ -228,3 +230,46 @@ def test_validate_input_dataframe_invalid_red_list_category_values():
         match=r"Validation errors:\nColumn 'red_list_category' has invalid value\(s\) \['INVALID'\]; allowed: dict_keys\(\['LC', 'NT', 'VU', 'EN', 'CR', 'RE', 'CR\(PE\)', 'CR\(PEW\)', 'EW', 'EX', 'DD'\]\)",
     ):
         validate_input_dataframe(df)
+
+
+def test_add_weights_column_valid_input():
+    df = pl.DataFrame(
+        {
+            "red_list_category": ["LC", "EN", "VU", "CR", "EX"],
+        }
+    )
+    expected_weights = [
+        RED_LIST_CATEGORY_WEIGHTS[category] for category in df["red_list_category"]
+    ]
+    result = add_weights_column(df)
+    assert "weights" in result.columns
+    assert result["weights"].to_list() == expected_weights
+
+
+def test_add_weights_column_invalid_category():
+    df = pl.DataFrame(
+        {
+            "red_list_category": ["LC", "INVALID_B", "INVALID_A", "VU"],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"Invalid value found in 'red_list_category' column: \['INVALID_A', 'INVALID_B'\]",
+    ):
+        add_weights_column(df)
+
+
+def test_add_weights_column_empty_dataframe():
+    df = pl.DataFrame({"red_list_category": []})
+    with pytest.raises(
+        ValueError, match="Input DataFrame has an empty 'red_list_category' column"
+    ):
+        add_weights_column(df)
+
+
+def test_add_weights_column_missing_red_list_category_column():
+    df = pl.DataFrame({"other_column": [1, 2, 3]})
+    with pytest.raises(
+        ValueError, match="Input DataFrame must contain a 'red_list_category' column"
+    ):
+        add_weights_column(df)

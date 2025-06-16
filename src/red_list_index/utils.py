@@ -181,6 +181,22 @@ def add_weights_column(df: pl.DataFrame) -> pl.DataFrame:
     Returns:
         pl.DataFrame: The modified DataFrame with a new 'weights' column.
     """
+    if "red_list_category" not in df.columns:
+        raise ValueError("Input DataFrame must contain a 'red_list_category' column")
+
+    found_categories = set(df["red_list_category"].unique().to_list())
+
+    if not found_categories:
+        raise ValueError("Input DataFrame has an empty 'red_list_category' column")
+
+    valid_categories = set(RED_LIST_CATEGORY_WEIGHTS.keys())
+    invalid_categories = found_categories - valid_categories
+
+    if invalid_categories:
+        raise ValueError(
+            f"Invalid value found in 'red_list_category' column: {sorted(invalid_categories)}"
+        )
+
     return df.with_columns(
         pl.col("red_list_category")
         .replace(RED_LIST_CATEGORY_WEIGHTS)

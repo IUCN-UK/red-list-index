@@ -169,3 +169,21 @@ def replace_data_deficient_rows(df: pl.DataFrame):
     )
 
     return valid_weights.tolist() + random_weights.tolist()
+
+
+def add_weights_column(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Adds a 'weights' column to the DataFrame by mapping values from the Red List category weight dictionary.
+
+    Args:
+        df (pl.DataFrame): The input Polars DataFrame.
+
+    Returns:
+        pl.DataFrame: The modified DataFrame with a new 'weights' column.
+    """
+    return df.with_columns(
+        pl.col("red_list_category")
+        .replace(RED_LIST_CATEGORY_WEIGHTS)
+        .cast(pl.Int64)
+        .alias("weights")
+    )

@@ -120,6 +120,7 @@ A note on the test fixture data available [here](https://github.com/IUCN-UK/red-
 This sample dataset covers Amphibians (8011 records per year), Birds (11197 records per year), Corals (846 records per year), Cycads (341 records per year) and Mammals (5803 records per year) and was used in the 2023 Red List Index (RLI) calculations.
 Comprehensive Red List assessments for these groups can be found at www.iucnredlist.org.
 
+```
 ┌───────────┬──────┬───────┬────────┬─────┐
 │ group     ┆ year ┆ total ┆ non_dd ┆ dd  │
 │ ---       ┆ ---  ┆ ---   ┆ ---    ┆ --- │
@@ -144,3 +145,4 @@ Comprehensive Red List assessments for these groups can be found at www.iucnredl
 │ Mammal    ┆ 1996 ┆ 5803  ┆ 4944   ┆ 859 │
 │ Mammal    ┆ 2008 ┆ 5803  ┆ 4944   ┆ 859 │
 └───────────┴──────┴───────┴────────┴─────┘
+```

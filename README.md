@@ -114,3 +114,33 @@ Run Ruff check
 ```
 uv run ruff check
 ```
+
+
+A note on the test fixture data available [here](https://github.com/IUCN-UK/red-list-index/blob/main/tests/fixtures/species_red_list_category_list.csv):
+This sample dataset covers Amphibians (8011 records per year), Birds (11197 records per year), Corals (846 records per year), Cycads (341 records per year) and Mammals (5803 records per year) and was used in the 2023 Red List Index (RLI) calculations.
+Comprehensive Red List assessments for these groups can be found at www.iucnredlist.org.
+
+┌───────────┬──────┬───────┬────────┬─────┐
+│ group     ┆ year ┆ total ┆ non_dd ┆ dd  │
+│ ---       ┆ ---  ┆ ---   ┆ ---    ┆ --- │
+│ str       ┆ i64  ┆ u32   ┆ u32    ┆ u32 │
+╞═══════════╪══════╪═══════╪════════╪═════╡
+│ Amphibian ┆ 1980 ┆ 8011  ┆ 7102   ┆ 909 │
+│ Amphibian ┆ 2004 ┆ 8011  ┆ 7102   ┆ 909 │
+│ Amphibian ┆ 2022 ┆ 8011  ┆ 7102   ┆ 909 │
+│ Bird      ┆ 1988 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 1994 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2000 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2004 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2008 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2012 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2016 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2020 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Bird      ┆ 2024 ┆ 11197 ┆ 11157  ┆ 40  │
+│ Coral     ┆ 1996 ┆ 846   ┆ 704    ┆ 142 │
+│ Coral     ┆ 2008 ┆ 846   ┆ 704    ┆ 142 │
+│ Cycad     ┆ 2003 ┆ 341   ┆ 338    ┆ 3   │
+│ Cycad     ┆ 2014 ┆ 341   ┆ 338    ┆ 3   │
+│ Mammal    ┆ 1996 ┆ 5803  ┆ 4944   ┆ 859 │
+│ Mammal    ┆ 2008 ┆ 5803  ┆ 4944   ┆ 859 │
+└───────────┴──────┴───────┴────────┴─────┘

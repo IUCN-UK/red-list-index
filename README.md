@@ -10,7 +10,7 @@ The IUCN Red List Index (RLI) shows trends in overall extinction risk for specie
 
 To calculate Red List Index values over time for each comprehensive group using a CSV file, run the included `calculate_global_rli.py` script from your terminal. 
 
-You must provide an input CSV file containing the following columns:
+You must provide an input CSV file containing the following columns ([example](https://github.com/IUCN-UK/red-list-index/blob/main/tests/fixtures/species_red_list_category_list.csv)):
 
 *id:* The species identifier. Must be an integer with no null values.
 

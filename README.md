@@ -32,6 +32,8 @@ To calculate Red List Index values over time for each comprehensive group using 
 [✓] Adding 'weights' column to DataFrame
 [✓] Validating input DataFrame
 [✓] Building Global Red List Index DataFrame (number of repetitions: 1000)          
+[✓] Interpolate RLI for missing years
+[✓] Aggregate RLI
 [✓] Saving results to: output.csv
 [✓] Saving plot to: output.png
 ```

@@ -11,23 +11,25 @@ class DataFrameProcessor:
             "allowed": RED_LIST_CATEGORY_WEIGHTS.keys(),
         },
         "year": {"dtype": pl.Int64, "not_null": True},
-        "group": {"dtype": pl.Utf8, "not_null": True},
-        "weights": {"dtype": pl.Int64, "not_null": False},
+        "group": {"dtype": pl.Utf8, "not_null": True}
     }
 
     def __init__(self, input_file):
         self.df = pl.read_csv(input_file)
-        self._initial_data_frame_validation()
+        self._validate_required_columns()
+        self._validate_schema()
+        self._validate_categories()
         self._add_weights_column()
-        self._secondary_data_frame_validation()
 
-    def _secondary_data_frame_validation(self):
+    def _validate_required_columns(self):
         missing = set(self.INPUT_DATA_FRAME_SCHEMA) - set(self.df.columns)
         if missing:
             raise ValueError(
                 f"Missing required column(s): {', '.join(sorted(missing))}"
             )
 
+
+    def _validate_schema(self):
         schema = self.df.schema
         errors = []
 
@@ -57,12 +59,7 @@ class DataFrameProcessor:
         if errors:
             raise ValueError("Validation errors:\n" + "\n".join(errors))
 
-    def _initial_data_frame_validation(self):
-        if "red_list_category" not in self.df.columns:
-            raise ValueError(
-                "Input DataFrame must contain a 'red_list_category' column"
-            )
-
+    def _validate_categories(self):
         found_categories = set(self.df["red_list_category"].unique().to_list())
         if not found_categories:
             raise ValueError("Input DataFrame has an empty 'red_list_category' column")

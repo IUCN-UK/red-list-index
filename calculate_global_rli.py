@@ -6,10 +6,13 @@
 import argparse
 import polars as pl
 import sys
+
 from pathlib import Path
 
 # Add 'src' directory to the module search path
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
+
+from red_list_index.data_frame_processor import DataFrameProcessor
 
 from red_list_index.utils import (
     build_global_red_list_indices,
@@ -18,9 +21,6 @@ from red_list_index.utils import (
     extrapolate_trends_for,
     calculate_aggregate_for,
 )
-
-from red_list_index.data_frame_processor import DataFrameProcessor
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -42,14 +42,11 @@ def main() -> None:
     number_of_repetitions = args.number_of_repetitions
 
     try:
-        # df = pl.read_csv(input_file)
-        df = DataFrameProcessor(
-            "./tests/fixtures/species_red_list_category_list.csv"
-        ).df
+        df = DataFrameProcessor(input_file).df
 
-        print(f"[✓] Reading and processing dataframe from: {input_file}")
+        print(f"[✓] Processing dataframe for: {input_file}")
     except Exception as e:
-        print(f"[✗] Reading and processing dataframe: {input_file} - {e}")
+        print(f"[✗] Processing dataframe for: {input_file} - {e}")
         sys.exit(1)
 
     print(

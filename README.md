@@ -1,8 +1,18 @@
 # The IUCN Red List Index
 
-The International Union for Conservation of Nature’s Red List of Threatened Species has evolved to become the world’s most comprehensive information source on the global conservation status of animal, fungi and plant species. It's a critical indicator of the health of the world’s biodiversity.
+The International Union for Conservation of Nature’s Red List of Threatened Species (www.iucnredlist.org) has evolved to become the world’s most comprehensive information source on the global conservation status of animal, fungi and plant species. It's a critical indicator of the health of the world’s biodiversity.
 
-The IUCN Red List Index (RLI) shows trends in overall extinction risk for species, and is used by governments to track their progress towards targets for reducing biodiversity loss.
+The Red List Index (RLI) measures trends over time in the overall extinction risk of species, as measured by their category of extinction risk on the IUCN Red List.
+
+Trends reflect shifts among categories owing solely to genuine improvement or deterioration in status (i.e. excluding category revisions owing to improved knowledge or revised taxonomy).
+
+A Red List Index value of 1.0 equates to all species being categorised as Least Concern, and hence that none are expected to go extinct in the near future. An RLI value of zero indicates that all species have gone Extinct. (Butchart et al., 2010)
+
+
+## Methodology
+
+The methodology used in this package follows the approach described by Butchart et al. (2004) [https://royalsocietypublishing.org/doi/10.1098/rstb.2004.1583; https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020383], with subsequent updates as outlined in Butchart et al. (2007) [https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000140].
+
 
 ## Installation
 

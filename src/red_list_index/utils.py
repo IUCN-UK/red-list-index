@@ -241,6 +241,8 @@ def calculate_rli_for(row_df, number_of_repetitions=1):
     dicts = counts_df["group"].to_list()
     group_sample_sizes = {k: v for d in dicts for k, v in d.items()}
 
+    # Note: The numpy .mean() method calculates and returns the arithmetic mean of elements in a NumPy array
+    #       as specified in Butchart et al., 2010.
     return {
         "rli": np.mean(rlis),
         "qn_95": np.percentile(rlis, 95),
@@ -463,6 +465,9 @@ def calculate_aggregate_from(df_rli_extrapolated_data):
     Returns:
         polars.DataFrame: A DataFrame with aggregated data grouped by year.
     """
+
+    # Note: Polars .mean() method calculates and returns the arithmetic mean of elements
+    #       as specified in Butchart et al., 2010.
     return (
         df_rli_extrapolated_data.sort("year")
         .group_by("year")

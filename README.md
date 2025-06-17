@@ -13,8 +13,11 @@ To calculate Red List Index values over time for each comprehensive group using 
 You must provide an input CSV file containing the following columns:
 
 *id:* The species identifier. Must be an integer with no null values.
+
 *red_list_category:* The conservation status. Must be a non-null string and one of the following values: LC, NT, VU, EN, CR, RE, CR(PE), CR(PEW), EW, EX, or DD.
+
 *year:* The year. Must be an integer with no null values.
+
 *group:* The comprehensive group. Must be a non-null string.
 
 

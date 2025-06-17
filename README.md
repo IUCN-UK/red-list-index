@@ -42,10 +42,10 @@ uv run calculate_global_rli.py <input_csv> <output_csv>
 ### Example
 
 ```bash
-uv run calculate_global_rli.py species_data.csv rli_output.csv --number_of_repetitions 1000
+uv run calculate_global_rli.py species_data.csv rli_output.csv --number_of_repetitions 500
 ```
 
-This command will calculate the Global Red List Index using the data from `species_data.csv`, save the results to `rli_output.csv`, and perform 1000 repetitions of the calculation to acount for resampling of Data Deficient (DD) rows.  The script displays output upon the completion of each stage (see example below).
+This command will calculate the Global Red List Index using the data from `species_data.csv`, save the results to `rli_output.csv`, and perform 500 repetitions of the calculation to acount for resampling of Data Deficient (DD) rows.  The script displays output upon the completion of each stage (see example below).
 
 For example, running this for the `species_red_list_category_list.csv` file found in the test fixtures directory:
 ```

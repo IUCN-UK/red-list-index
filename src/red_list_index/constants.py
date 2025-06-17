@@ -15,15 +15,3 @@ RED_LIST_CATEGORY_WEIGHTS = {
     "EX": 5,  # Extinct
     "DD": None,  # Data Deficient
 }
-
-INPUT_DATA_FRAME_SCHEMA = {
-    "id": {"dtype": pl.Int64, "not_null": True},
-    "red_list_category": {
-        "dtype": pl.Utf8,
-        "not_null": True,
-        "allowed": RED_LIST_CATEGORY_WEIGHTS.keys(),
-    },
-    "year": {"dtype": pl.Int64, "not_null": True},
-    "group": {"dtype": pl.Utf8, "not_null": True},
-    "weights": {"dtype": pl.Int64, "not_null": False},
-}

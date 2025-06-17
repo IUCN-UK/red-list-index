@@ -12,14 +12,14 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 from red_list_index.utils import (
-    validate_input_dataframe,
-    add_weights_column,
     build_global_red_list_indices,
     plot_global_rli,
     interpolate_rli_for_missing_years,
     extrapolate_trends_for,
     calculate_aggregate_for,
 )
+
+from red_list_index.data_frame_processor import DataFrameProcessor
 
 
 def main() -> None:
@@ -42,24 +42,14 @@ def main() -> None:
     number_of_repetitions = args.number_of_repetitions
 
     try:
-        df = pl.read_csv(input_file)
-        print(f"[✓] Reading from: {input_file}")
-    except Exception as e:
-        print(f"[✗] Reading from: {input_file} - {e}")
-        sys.exit(1)
+        # df = pl.read_csv(input_file)
+        df = DataFrameProcessor(
+            "./tests/fixtures/species_red_list_category_list.csv"
+        ).df
 
-    try:
-        df = add_weights_column(df)
-        print("[✓] Adding 'weights' column to DataFrame")
+        print(f"[✓] Reading and processing dataframe from: {input_file}")
     except Exception as e:
-        print(f"[✗] Adding 'weights' column to DataFrame - {e}")
-        sys.exit(1)
-
-    try:
-        validate_input_dataframe(df)
-        print("[✓] Validating input DataFrame")
-    except Exception as e:
-        print(f"[✗] Validating input DataFrame - {e}")
+        print(f"[✗] Reading and processing dataframe: {input_file} - {e}")
         sys.exit(1)
 
     print(

@@ -370,6 +370,23 @@ def interpolate_rli_for_missing_years(rli_df):
 
 
 def extrapolate_trends_for(trends_df):
+    """
+    Extrapolates trends for each group in the given DataFrame by fitting a linear model
+    and extending the trend across the full range of years.
+
+    Parameters:
+        trends_df (pl.DataFrame): A Polars DataFrame containing columns:
+            - "year" (int): The year of the trend data.
+            - "rli" (float): The Red List Index value for the corresponding year.
+            - "group" (str): The group identifier.
+
+    Returns:
+        pl.DataFrame: A Polars DataFrame containing extrapolated trends for all groups
+        across the full range of years. The resulting DataFrame includes columns:
+            - "year" (int): The year of the extrapolated trend data.
+            - "rli" (float): The extrapolated Red List Index value, clipped between 0.0 and 1.0.
+            - "group" (str): The group identifier.
+    """
     df_full_extrapolated = pl.DataFrame(
         {
             "year": pl.Series([], dtype=pl.Int64),
@@ -405,13 +422,27 @@ def extrapolate_trends_for(trends_df):
 
 
 def calculate_aggregate_for(df_rli_data):
+    """
+    Calculate the aggregate value for the given Red List Index (RLI) data.
+
+    This function first extrapolates trends from the provided RLI data using
+    the `extrapolate_trends_for` function, and then calculates the aggregate
+    value from the extrapolated data using the `calculate_aggregate_from` function.
+
+    Args:
+        df_rli_data (pd.DataFrame): A DataFrame containing Red List Index data.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the aggregated results based on
+        the extrapolated trends.
+    """
     df_rli_extrapolated = extrapolate_trends_for(df_rli_data)
     return calculate_aggregate_from(df_rli_extrapolated)
 
 
 def calculate_aggregate_from(df_rli_extrapolated_data):
     """
-    Aggregates data from a DataFrame by year and calculates summary statistics.
+    Aggregates Red List Index (RLI) data for each group across the full range of years.
 
     This function takes a DataFrame containing extrapolated Red List Index (RLI) data,
     sorts it by the "year" column, groups the data by "year", and computes aggregate

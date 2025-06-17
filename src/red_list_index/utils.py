@@ -151,6 +151,11 @@ def replace_data_deficient_rows(df: pl.DataFrame):
     """
     Replace Data Deficient (DD) weights in the DataFrame with randomly sampled valid weights.
 
+    Data Deficiency: Red List categories (from Least Concern to Extinct) are assigned to all
+    Data Deficient species, with a probability proportional to the number of species in non-Data
+    Deficient categories for that taxonomic group (Butchart et al., 2010).
+
+
     Args:
         df (pl.DataFrame): A Polars DataFrame containing a 'weights' column, where some rows may have null (DD) values.
 
@@ -169,7 +174,7 @@ def replace_data_deficient_rows(df: pl.DataFrame):
     data_deficient_count = df.filter(pl.col("weights").is_null()).height
 
     random_weights = np.random.choice(
-        valid_weights, size=data_deficient_count, replace=True
+        valid_weights, size=data_deficient_count, replace=False
     )
 
     return valid_weights.tolist() + random_weights.tolist()

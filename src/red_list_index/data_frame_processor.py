@@ -3,6 +3,40 @@ from .constants import RED_LIST_CATEGORY_WEIGHTS
 
 
 class DataFrameProcessor:
+    """
+    DataFrameProcessor is a class designed to process and validate a DataFrame containing
+    data related to the Red List Index. It ensures the input data conforms to a predefined
+    schema, validates required columns, checks for invalid categories, and adds a weights
+    column based on predefined category weights.
+
+    Attributes:
+        INPUT_DATA_FRAME_SCHEMA (dict): Defines the expected schema for the input DataFrame,
+            including column names, data types, nullability, and allowed values.
+
+    Methods:
+        __init__(input_file):
+            Initializes the DataFrameProcessor instance by loading the input CSV file into
+            a DataFrame and performing validation and processing steps.
+
+        _validate_required_columns():
+            Checks if all required columns are present in the input DataFrame. Raises a
+            ValueError if any required columns are missing.
+
+        _validate_schema():
+            Validates the schema of the input DataFrame, including data types, nullability,
+            and allowed values for specific columns. Raises a ValueError if any validation
+            errors are found.
+
+        _validate_categories():
+            Ensures the 'red_list_category' column contains valid categories as defined by
+            RED_LIST_CATEGORY_WEIGHTS. Raises a ValueError if invalid categories are found
+            or if the column is empty.
+
+        _add_weights_column():
+            Adds a 'weights' column to the DataFrame by mapping the 'red_list_category'
+            values to their corresponding weights defined in RED_LIST_CATEGORY_WEIGHTS.
+    """
+
     INPUT_DATA_FRAME_SCHEMA = {
         "id": {"dtype": pl.Int64, "not_null": True},
         "red_list_category": {

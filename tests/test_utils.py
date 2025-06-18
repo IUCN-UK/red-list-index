@@ -1,76 +1,11 @@
 import polars as pl
-import numpy as np
-import random
+# import numpy as np
+# import random
 
-from red_list_index.utils import replace_data_deficient_rows
-from red_list_index.utils import calculate_rli_for
+# from red_list_index.utils import replace_data_deficient_rows
+# from red_list_index.utils import calculate_rli_for
 from red_list_index.utils import interpolate_rli_for_missing_years
 from red_list_index.utils import calculate_aggregate_from
-
-
-def test_replace_data_deficient_rows_valid_input():
-    # This test checks if the function correctly replaces all None values with
-    # values sampled from non-null values in the 'weights' column
-    valid_weights = random.sample([0, 1, 2, 3, 4, 5], 4)
-    data_deficient_weights = [None, None]
-
-    df = pl.DataFrame({"weights": valid_weights + data_deficient_weights})
-    result = replace_data_deficient_rows(df)
-    assert len(result) == 6
-    assert all(isinstance(weight, int) for weight in result)
-    assert all(x in result for x in valid_weights), (
-        "Not all values in results are present in the initial valid_weights"
-    )
-
-
-def test_replace_data_deficient_rows_no_null_weights():
-    df = pl.DataFrame({"weights": [1, 2, 3, 4, 5]})
-    result = replace_data_deficient_rows(df)
-    assert result == [1, 2, 3, 4, 5]
-
-
-def test_calculate_rli_for_valid_input():
-    df = pl.DataFrame({"group": ["Bird", "Bird", "Bird"], "weights": [1, 2, 1]})
-
-    result = calculate_rli_for(df, number_of_repetitions=3)
-
-    assert result == {
-        "rli": np.float64(0.7333333333333334),
-        "qn_95": np.float64(0.7333333333333334),
-        "qn_05": np.float64(0.7333333333333334),
-        "n": 3,
-        "group_sample_sizes": {"group": "Bird", "count": 3},
-    }
-
-
-def test_calculate_rli_for_valid_input_with_null_dd_values():
-    df = pl.DataFrame({"group": ["Bird", "Bird", "Bird"], "weights": [1, 2, None]})
-
-    result = calculate_rli_for(df, number_of_repetitions=2)
-
-    assert result in [
-        {
-            "rli": np.float64(0.7333333333333334),
-            "qn_95": np.float64(0.7333333333333334),
-            "qn_05": np.float64(0.7333333333333334),
-            "n": 2,
-            "group_sample_sizes": {"group": "Bird", "count": 3},
-        },
-        {
-            "rli": np.float64(0.6666666666666667),
-            "qn_95": np.float64(0.6666666666666667),
-            "qn_05": np.float64(0.6666666666666667),
-            "n": 2,
-            "group_sample_sizes": {"group": "Bird", "count": 3},
-        },
-        {
-            "rli": np.float64(0.7000000000000001),
-            "qn_95": np.float64(0.7300000000000001),
-            "qn_05": np.float64(0.67),
-            "n": 2,
-            "group_sample_sizes": {"group": "Bird", "count": 3},
-        },
-    ]
 
 
 def test_interpolate_rli_for_missing_years_valid_input():

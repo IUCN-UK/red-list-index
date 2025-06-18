@@ -13,9 +13,9 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 from red_list_index.data_frame_processor import DataFrameProcessor
+from red_list_index.calculate_groups import CalculateGroups
 
 from red_list_index.utils import (
-    build_global_red_list_indices,
     plot_global_rli,
     interpolate_rli_for_missing_years,
     extrapolate_trends_for,
@@ -50,15 +50,10 @@ def main() -> None:
         print(f"[✗] Processing and validating dataframe for: {input_file} - {e}")
         sys.exit(1)
 
-    print(
-        f"\r[-] Building Global Red List Index DataFrame (number of repetitions: {number_of_repetitions})",
-        end="",
-        flush=True,
-    )
     try:
-        rli_df = build_global_red_list_indices(df, number_of_repetitions)
+        rli_df = CalculateGroups(df, number_of_repetitions).df
         print(
-            f"\r[✓] Building Global Red List Index DataFrame (number of repetitions: {number_of_repetitions}){' ' * 10}"
+            f"[✓] Building Global Red List Index DataFrame (number of repetitions: {number_of_repetitions})"
         )
     except Exception as e:
         print(

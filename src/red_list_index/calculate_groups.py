@@ -5,20 +5,45 @@ from red_list_index.calculate import Calculate
 
 
 class CalculateGroups:
+    """
+    CalculateGroups is a class to compute the Red List Index (RLI) values for different groups and years
+    based on input data. It provides methods to account for uncertainty due to Data Deficient (DD) species.
+
+    Attributes:
+      df (polars.DataFrame): A DataFrame containing the input data for RLI calculations.
+      number_of_repetitions (int): The number of repetitions for RLI simulations to account for variability.
+
+    Methods:
+      __init__(df, number_of_repetitions=1):
+        Initializes the CalculateGroups instance, processes the input DataFrame, and prepares it for RLI calculations.
+
+      _build_global_red_list_indices(df):
+        Builds a DataFrame containing Red List Index (RLI) results for each group and year. For each unique group in the
+        input DataFrame, this function iterates over all years associated with that group.
+
+        It computes the RLI for each group and year combination by calling `calculate_rli_for`, repeating the calculation
+        a specified number of times to account for uncertainty or variability due to any included Data Deficient (DD) species.
+        The results for all combinations are collected and returned as a new Polars DataFrame.
+
+      _calculate_rli_for(row_df, number_of_repetitions=1):
+        Calculates the RLI and summary statistics for a given group/year subset of data. Performs repeated simulations
+        to estimate the RLI, replacing Data Deficient rows and computing the mean, percentiles, and sample sizes.
+
+        It returns the mean RLI, the 95th and 5th percentiles, the number of repetitions, and a dictionary
+        of sample sizes for each group in the data.
+
+      _replace_data_deficient_rows(df):
+        Replaces Data Deficient (DD) weights in the DataFrame with randomly sampled valid weights.
+        As per Butchart et al. (2010), Red List categories (from Least Concern to Extinct) are assigned to all
+        Data Deficient species, with a probability proportional to the number of species in non-Data Deficient
+        categories for that taxonomic group.
+    """
+
     def __init__(self, df, number_of_repetitions=1):
         self.number_of_repetitions = number_of_repetitions
         self.df = self._build_global_red_list_indices(df)
 
     def _build_global_red_list_indices(self, df):
-        """
-        Builds a DataFrame containing Red List Index (RLI) results for each group and year.
-
-        For each unique group in the input DataFrame, this function iterates over all years associated with that group.
-
-        It computes the RLI for each group and year combination by calling `calculate_rli_for`, repeating the calculation
-        a specified number of times to account for uncertainty or variability due to included Data Deficient (DD) species.
-        The results for all combinations are collected and returned as a new Polars DataFrame.
-        """
         rli_df = []
         for group in df["group"].unique():
             years = df.filter(pl.col("group") == group)["year"].unique()
@@ -34,16 +59,6 @@ class CalculateGroups:
         return pl.DataFrame(rli_df)
 
     def _calculate_rli_for(self, row_df, number_of_repetitions=1):
-        """
-        Calculates the Red List Index (RLI) and summary statistics for a given group/year subset of data.
-
-        This function performs repeated simulations to estimate the RLI using the provided data subset.
-
-        For each repetition, it replaces Data Deficient rows, computes the RLI, and collects the results.
-
-        It returns the mean RLI, the 95th and 5th percentiles, the number of repetitions, and a dictionary
-        of sample sizes for each group in the data.
-        """
         rlis = []
         for n in range(number_of_repetitions):
             weights_for_group_and_year = self._replace_data_deficient_rows(row_df)
@@ -63,12 +78,6 @@ class CalculateGroups:
         }
 
     def _replace_data_deficient_rows(self, df):
-        """
-        Replace Data Deficient (DD) weights in the DataFrame with randomly sampled valid weights.
-        Data Deficiency: Red List categories (from Least Concern to Extinct) are assigned to all
-        Data Deficient species, with a probability proportional to the number of species in non-Data
-        Deficient categories for that taxonomic group (Butchart et al., 2010).
-        """
         valid_weights = df.filter(pl.col("weights").is_not_null())["weights"].to_numpy()
         if valid_weights.size == 0:
             raise ValueError("No valid weights found in the DataFrame to sample from.")

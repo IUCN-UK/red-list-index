@@ -11,7 +11,7 @@ class DataFrameProcessor:
             "allowed": RED_LIST_CATEGORY_WEIGHTS.keys(),
         },
         "year": {"dtype": pl.Int64, "not_null": True},
-        "group": {"dtype": pl.Utf8, "not_null": True}
+        "group": {"dtype": pl.Utf8, "not_null": True},
     }
 
     def __init__(self, input_file):
@@ -27,7 +27,6 @@ class DataFrameProcessor:
             raise ValueError(
                 f"Missing required column(s): {', '.join(sorted(missing))}"
             )
-
 
     def _validate_schema(self):
         schema = self.df.schema

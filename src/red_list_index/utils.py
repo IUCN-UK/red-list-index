@@ -7,8 +7,6 @@ from .constants import RED_LIST_CATEGORY_WEIGHTS
 from red_list_index.calculate import Calculate
 
 
-
-
 def replace_data_deficient_rows(df: pl.DataFrame):
     """
     Replace Data Deficient (DD) weights in the DataFrame with randomly sampled valid weights.

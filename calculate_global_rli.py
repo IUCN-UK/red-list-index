@@ -22,6 +22,7 @@ from red_list_index.utils import (
     calculate_aggregate_for,
 )
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate Global Red List Index from input CSV"
@@ -44,9 +45,9 @@ def main() -> None:
     try:
         df = DataFrameProcessor(input_file).df
 
-        print(f"[✓] Processing dataframe for: {input_file}")
+        print(f"[✓] Processing and validating dataframe for: {input_file}")
     except Exception as e:
-        print(f"[✗] Processing dataframe for: {input_file} - {e}")
+        print(f"[✗] Processing and validating dataframe for: {input_file} - {e}")
         sys.exit(1)
 
     print(

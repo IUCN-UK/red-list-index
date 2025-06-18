@@ -1,9 +1,5 @@
 import polars as pl
-# import numpy as np
-# import random
 
-# from red_list_index.utils import replace_data_deficient_rows
-# from red_list_index.utils import calculate_rli_for
 from red_list_index.utils import interpolate_rli_for_missing_years
 from red_list_index.utils import calculate_aggregate_from
 

@@ -1,7 +1,6 @@
 import polars as pl
 import numpy as np
 
-# from .constants import RED_LIST_CATEGORY_WEIGHTS
 from red_list_index.calculate import Calculate
 
 
@@ -17,11 +16,6 @@ class CalculateGroups:
         It computes RLI statistics for each (group, year) combination by calling `calculate_rli_for`, repeating the calculation
         a specified number of times to account for uncertainty or variability due to included Data Deficient (DD) species.
         The results for all combinations are collected and returned as a new Polars DataFrame.
-        Args:
-            df (pl.DataFrame): Input Polars DataFrame containing "id","red_list_category","year", and "group" columns.
-            number_of_repetitions (int, optional): Number of repetitions for the RLI simulation in each group/year. Default is 1.
-        Returns:
-            pl.DataFrame: A DataFrame where each row corresponds to a group/year with RLI statistics and sample sizes.
         """
         rli_df = []
         for group in df["group"].unique():
@@ -45,19 +39,6 @@ class CalculateGroups:
         For each repetition, it replaces data-deficient rows, computes the RLI, and collects the results.
         It returns the mean RLI, the 95th and 5th percentiles, the number of repetitions, and a dictionary
         of sample sizes for each group in the data.
-
-        Args:
-            row_df (pl.DataFrame): A Polars DataFrame containing the subset of data for a particular group/year.
-            number_of_repetitions (int, optional): The number of repetitions for the simulation. Default is 1.
-
-        Returns:
-            dict: {
-                "rli": Mean RLI across repetitions,
-                "qn_95": 95th percentile of RLI,
-                "qn_05": 5th percentile of RLI,
-                "n": Number of repetitions,
-                "group_sample_sizes": Dictionary of sample sizes per group
-            }
         """
         rlis = []
         for n in range(number_of_repetitions):

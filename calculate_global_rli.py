@@ -16,7 +16,6 @@ from red_list_index.data_frame_processor import DataFrameProcessor
 from red_list_index.calculate_groups import CalculateGroups
 
 from red_list_index.utils import (
-    # build_global_red_list_indices,
     plot_global_rli,
     interpolate_rli_for_missing_years,
     extrapolate_trends_for,

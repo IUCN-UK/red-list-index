@@ -12,8 +12,10 @@ class CalculateGroups:
     def _build_global_red_list_indices(self, df):
         """
         Builds a DataFrame containing Red List Index (RLI) results for each group and year.
+
         For each unique group in the input DataFrame, this function iterates over all years associated with that group.
-        It computes RLI statistics for each (group, year) combination by calling `calculate_rli_for`, repeating the calculation
+
+        It computes the RLI for each group and year combination by calling `calculate_rli_for`, repeating the calculation
         a specified number of times to account for uncertainty or variability due to included Data Deficient (DD) species.
         The results for all combinations are collected and returned as a new Polars DataFrame.
         """
@@ -36,7 +38,9 @@ class CalculateGroups:
         Calculates the Red List Index (RLI) and summary statistics for a given group/year subset of data.
 
         This function performs repeated simulations to estimate the RLI using the provided data subset.
-        For each repetition, it replaces data-deficient rows, computes the RLI, and collects the results.
+
+        For each repetition, it replaces Data Deficient rows, computes the RLI, and collects the results.
+
         It returns the mean RLI, the 95th and 5th percentiles, the number of repetitions, and a dictionary
         of sample sizes for each group in the data.
         """

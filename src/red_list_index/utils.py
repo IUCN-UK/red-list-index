@@ -3,7 +3,6 @@ import polars as pl
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from .constants import RED_LIST_CATEGORY_WEIGHTS
 from red_list_index.calculate import Calculate
 
 

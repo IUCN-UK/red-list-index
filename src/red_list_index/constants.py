@@ -1,6 +1,3 @@
-import polars as pl
-
-
 # Weights for each Red List category
 RED_LIST_CATEGORY_WEIGHTS = {
     "LC": 0,  # Least Concern

@@ -1,15 +1,20 @@
+import csv
 import pytest
-import polars as pl
 from red_list_index.data_frame_processor import DataFrameProcessor
-from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 from tempfile import NamedTemporaryFile
+from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
 
 
 def create_test_csv(data):
     """Helper function to create a temporary CSV file for testing."""
-    temp_file = NamedTemporaryFile(delete=False, suffix=".csv")
-    df = pl.DataFrame(data)
-    df.write_csv(temp_file.name)
+    temp_file = NamedTemporaryFile(delete=False, suffix=".csv", mode="w", newline="")
+    writer = csv.DictWriter(temp_file, fieldnames=list(data.keys()))
+    writer.writeheader()
+    # Convert column-wise dict of lists to row-wise dicts
+    rows = zip(*data.values())
+    for row in rows:
+        writer.writerow(dict(zip(data.keys(), row)))
+    temp_file.close()
     return temp_file.name
 
 
@@ -95,16 +100,16 @@ def test_invalid_red_list_category():
         DataFrameProcessor(input_file)
 
 
-def test_polars_shape_error():
+def test_null_red_list_category_error():
     """Test that an empty red_list_category column raises a ShapeError."""
     data = {
         "id": [1, 2, 3],
-        "red_list_category": [],
+        "red_list_category": [None, None, None],  # All None values
         "year": [2020, 2021, 2022],
         "group": ["Mammals", "Birds", "Reptiles"],
     }
+    input_file = create_test_csv(data)
     with pytest.raises(
-        pl.exceptions.ShapeError,
-        match=r"could not create a new DataFrame: height of column 'red_list_category' \(0\) does not match height of column 'id' \(3\)",
+        ValueError, match=r"Column 'red_list_category' contains 3 null value\(s\)"
     ):
-        pl.DataFrame(data)
+        DataFrameProcessor(input_file)

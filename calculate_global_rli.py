@@ -14,9 +14,10 @@ sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 from red_list_index.data_frame_processor import DataFrameProcessor
 from red_list_index.calculate_groups import CalculateGroups
+from red_list_index.plot import Plot
 
 from red_list_index.utils import (
-    plot_global_rli,
+    # plot_global_rli,
     interpolate_rli_for_missing_years,
     extrapolate_trends_for,
     calculate_aggregate_for,
@@ -91,7 +92,9 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        plot_global_rli(rli_df, output_file.replace(".csv", ".png"))
+        plot = Plot(rli_df)
+        plot.global_rli(output_file.replace(".csv", ".png"))
+        # plot_global_rli(rli_df, output_file.replace(".csv", ".png"))
         print(f"[✓] Saving plot to: {output_file.replace('.csv', '.png')}")
     except Exception as e:
         print(f"[✗] Saving plot to: {output_file.replace('.csv', '.png')} - {e}")

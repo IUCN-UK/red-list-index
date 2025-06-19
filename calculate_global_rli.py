@@ -62,8 +62,6 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        # rli_df = interpolate_rli_for_missing_years(rli_df)
-
         rli_df = YearInterpolation.interpolate_rli_for_missing_years(rli_df)
 
         print("[✓] Interpolate RLI for missing years")

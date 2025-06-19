@@ -93,7 +93,6 @@ def main() -> None:
     try:
         plot = Plot(rli_df)
         plot.global_rli(output_file.replace(".csv", ".png"))
-        # plot_global_rli(rli_df, output_file.replace(".csv", ".png"))
         print(f"[✓] Saving plot to: {output_file.replace('.csv', '.png')}")
     except Exception as e:
         print(f"[✗] Saving plot to: {output_file.replace('.csv', '.png')} - {e}")

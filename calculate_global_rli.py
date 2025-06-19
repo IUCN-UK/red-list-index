@@ -17,7 +17,6 @@ from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
 
 from red_list_index.utils import (
-    # plot_global_rli,
     interpolate_rli_for_missing_years,
     extrapolate_trends_for,
     calculate_aggregate_for,

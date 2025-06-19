@@ -6,6 +6,7 @@
 import argparse
 import polars as pl
 import sys
+import asyncio
 
 from pathlib import Path
 
@@ -23,7 +24,7 @@ from red_list_index.utils import (
 )
 
 
-def main() -> None:
+async def main() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate Global Red List Index from input CSV"
     )
@@ -44,14 +45,14 @@ def main() -> None:
 
     try:
         df = DataFrameProcessor(input_file).df
-
         print(f"[✓] Processing and validating dataframe for: {input_file}")
     except Exception as e:
         print(f"[✗] Processing and validating dataframe for: {input_file} - {e}")
         sys.exit(1)
 
     try:
-        rli_df = CalculateGroups(df, number_of_repetitions).df
+        groups = await CalculateGroups.create(df, number_of_repetitions)
+        rli_df = groups.df
         print(
             f"[✓] Building Global Red List Index DataFrame (number of repetitions: {number_of_repetitions})"
         )
@@ -63,7 +64,6 @@ def main() -> None:
 
     try:
         rli_df = YearInterpolation.interpolate_rli_for_missing_years(rli_df)
-
         print("[✓] Interpolate RLI for missing years")
     except Exception as e:
         print(f"[✗] Interpolate RLI for missing years - {e}")
@@ -72,19 +72,15 @@ def main() -> None:
     try:
         rli_df_extrapolated = extrapolate_trends_for(rli_df)
         rli_df_aggregated = calculate_aggregate_for(rli_df_extrapolated)
-
         rli_df = pl.concat([rli_df, rli_df_aggregated], how="vertical")
-
         print("[✓] Aggregate RLI")
     except Exception as e:
         print(f"[✗] Aggregate RLI - {e}")
         sys.exit(1)
 
     try:
-        # Ensure 'group_sample_sizes' is cast to string for CSV output
         rli_df = rli_df.with_columns(pl.col("group_sample_sizes").cast(pl.Utf8))
         rli_df.write_csv(output_file)
-
         print(f"[✓] Saving results to: {output_file}")
     except Exception as e:
         print(f"[✗] Saving results to: {output_file} - {e}")
@@ -98,6 +94,5 @@ def main() -> None:
         print(f"[✗] Saving plot to: {output_file.replace('.csv', '.png')} - {e}")
         sys.exit(1)
 
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

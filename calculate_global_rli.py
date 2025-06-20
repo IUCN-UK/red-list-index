@@ -23,6 +23,17 @@ from red_list_index.utils import (
 )
 
 
+def limit_number_of_repetitions(value):
+    ivalue = int(value)
+    if ivalue > 10000:
+        raise argparse.ArgumentTypeError(
+            "number_of_repetitions must be no more than 10000"
+        )
+    if ivalue < 1:
+        raise argparse.ArgumentTypeError("number_of_repetitions must be at least 1")
+    return ivalue
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate Global Red List Index from input CSV"
@@ -31,9 +42,9 @@ def main() -> None:
     parser.add_argument("output_csv", help="Path to save the output CSV file")
     parser.add_argument(
         "--number_of_repetitions",
-        type=int,
+        type=limit_number_of_repetitions,
         default=1000,
-        help="Number of repetitions (default: 1000)",
+        help="Number of repetitions (default: 1000, maximum: 10000, minimum: 1)",
     )
 
     args = parser.parse_args()
@@ -50,6 +61,11 @@ def main() -> None:
         print(f"[✗] Processing and validating dataframe for: {input_file} - {e}")
         sys.exit(1)
 
+    print(
+        f"[-] Building Global Red List Index DataFrame (number of repetitions: {number_of_repetitions})",
+        end="\r",
+        flush=True,
+    )
     try:
         rli_df = CalculateGroups(df, number_of_repetitions).df
         print(

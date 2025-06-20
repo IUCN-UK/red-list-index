@@ -35,7 +35,10 @@ def test_calculate_groups_initialization():
                 "qn_95": 0.09999999999999998,
                 "qn_05": 0.09999999999999998,
                 "n": 1,
-                "taxonomic_group_sample_sizes": {"taxonomic_group": "Birds", "count": 2},
+                "taxonomic_group_sample_sizes": {
+                    "taxonomic_group": "Birds",
+                    "count": 2,
+                },
             },
             {
                 "taxonomic_group": "Mammals",
@@ -44,7 +47,10 @@ def test_calculate_groups_initialization():
                 "qn_95": 0.09999999999999998,
                 "qn_05": 0.09999999999999998,
                 "n": 1,
-                "taxonomic_group_sample_sizes": {"taxonomic_group": "Mammals", "count": 2},
+                "taxonomic_group_sample_sizes": {
+                    "taxonomic_group": "Mammals",
+                    "count": 2,
+                },
             },
         ]
     )

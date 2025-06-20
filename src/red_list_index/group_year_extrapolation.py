@@ -29,7 +29,9 @@ class GroupYearExtrapolation:
             }
         )
 
-        groups = trends_df.select("taxonomic_group").unique()["taxonomic_group"].to_list()
+        groups = (
+            trends_df.select("taxonomic_group").unique()["taxonomic_group"].to_list()
+        )
 
         # Get full year range across all groups
         all_years = trends_df.select(["year"]).unique().sort("year")

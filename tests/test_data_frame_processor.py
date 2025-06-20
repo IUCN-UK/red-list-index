@@ -21,10 +21,10 @@ def create_test_csv(data):
 def test_valid_data_frame():
     """Test that a valid DataFrame is processed correctly."""
     data = {
-        "id": [1, 2, 3],
+        "sis_taxon_id": [1, 2, 3],
         "red_list_category": ["LC", "VU", "EN"],
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
     processor = DataFrameProcessor(input_file)
@@ -39,9 +39,9 @@ def test_valid_data_frame():
 def test_missing_required_columns():
     """Test that missing required columns raise a ValueError."""
     data = {
-        "id": [1, 2, 3],
+        "sis_taxon_id": [1, 2, 3],
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
 
@@ -54,15 +54,15 @@ def test_missing_required_columns():
 def test_invalid_schema():
     """Test that invalid column types raise a ValueError."""
     data = {
-        "id": ["1a", "2a", "3a"],  # Invalid type (should be Int64)
+        "sis_taxon_id": ["1a", "2a", "3a"],  # Invalid type (should be Int64)
         "red_list_category": ["LC", "VU", "EN"],
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
 
     with pytest.raises(
-        ValueError, match=r"Validation errors:\nColumn 'id' must be Int64, got String"
+        ValueError, match=r"Validation errors:\nColumn 'sis_taxon_id' must be Int64, got String"
     ):
         DataFrameProcessor(input_file)
 
@@ -70,15 +70,15 @@ def test_invalid_schema():
 def test_null_values():
     """Test that null values in required columns raise a ValueError."""
     data = {
-        "id": [1, None, 3],
+        "sis_taxon_id": [1, None, 3],
         "red_list_category": ["LC", "VU", "EN"],
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
 
     with pytest.raises(
-        ValueError, match=r"Validation errors:\nColumn 'id' contains 1 null value\(s\)"
+        ValueError, match=r"Validation errors:\nColumn 'sis_taxon_id' contains 1 null value\(s\)"
     ):
         DataFrameProcessor(input_file)
 
@@ -86,10 +86,10 @@ def test_null_values():
 def test_invalid_red_list_category():
     """Test that invalid red_list_category values raise a ValueError."""
     data = {
-        "id": [1, 2, 3],
+        "sis_taxon_id": [1, 2, 3],
         "red_list_category": ["INVALID", "VU", "EN"],
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
 
@@ -103,10 +103,10 @@ def test_invalid_red_list_category():
 def test_null_red_list_category_error():
     """Test that an empty red_list_category column raises a ShapeError."""
     data = {
-        "id": [1, 2, 3],
+        "sis_taxon_id": [1, 2, 3],
         "red_list_category": [None, None, None],  # All None values
         "year": [2020, 2021, 2022],
-        "group": ["Mammals", "Birds", "Reptiles"],
+        "taxonomic_group": ["Mammals", "Birds", "Reptiles"],
     }
     input_file = create_test_csv(data)
     with pytest.raises(

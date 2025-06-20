@@ -20,10 +20,10 @@ class GroupYearInterpolation:
     """
 
     def interpolate_rli_for_missing_years(rli_df):
-        unique_groups_list = rli_df["group"].unique()
+        unique_groups_list = rli_df["taxonomic_group"].unique()
         df_list = []
         for group in unique_groups_list:
-            group_rli_df = rli_df.filter(pl.col("group") == group)
+            group_rli_df = rli_df.filter(pl.col("taxonomic_group") == group)
 
             all_years = pl.DataFrame(
                 {
@@ -38,7 +38,7 @@ class GroupYearInterpolation:
             # Fill group and interpolate rli
             df_full = df_full.with_columns(
                 [
-                    pl.lit(group).alias("group"),
+                    pl.lit(group).alias("taxonomic_group"),
                     pl.col("rli").interpolate(),
                     pl.col("qn_05").interpolate(),
                     pl.col("qn_95").interpolate(),
@@ -47,10 +47,10 @@ class GroupYearInterpolation:
                     .interpolate()
                     .cast(pl.Int64)
                     .alias("n"),
-                    pl.col("group_sample_sizes")
+                    pl.col("taxonomic_group_sample_sizes")
                     .fill_null(strategy="forward")
                     .interpolate()
-                    .alias("group_sample_sizes"),
+                    .alias("taxonomic_group_sample_sizes"),
                 ]
             )
             df_list.append(df_full)

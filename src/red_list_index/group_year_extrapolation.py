@@ -12,7 +12,7 @@ class GroupYearExtrapolation:
             trends_df (pl.DataFrame): A Polars DataFrame containing columns:
                 - "year" (int): The year of the trend data.
                 - "rli" (float): The Red List Index value for the corresponding year.
-                - "group" (str): The group identifier.
+                - "taxonomic_group" (str): The group identifier.
 
         Returns:
             pl.DataFrame: A Polars DataFrame containing extrapolated trends for all groups
@@ -25,17 +25,17 @@ class GroupYearExtrapolation:
             {
                 "year": pl.Series([], dtype=pl.Int64),
                 "rli": pl.Series([], dtype=pl.Float64),
-                "group": pl.Series([], dtype=pl.Utf8),
+                "taxonomic_group": pl.Series([], dtype=pl.Utf8),
             }
         )
 
-        groups = trends_df.select("group").unique()["group"].to_list()
+        groups = trends_df.select("taxonomic_group").unique()["taxonomic_group"].to_list()
 
         # Get full year range across all groups
         all_years = trends_df.select(["year"]).unique().sort("year")
 
         for group in groups:
-            group_df = trends_df.filter(pl.col("group") == group).select(
+            group_df = trends_df.filter(pl.col("taxonomic_group") == group).select(
                 ["year", "rli"]
             )
 
@@ -48,7 +48,7 @@ class GroupYearExtrapolation:
                     (pl.col("year") * slope + intercept)
                     .clip(lower_bound=0.0, upper_bound=1.0)
                     .alias("rli"),
-                    pl.lit(group).alias("group"),
+                    pl.lit(group).alias("taxonomic_group"),
                 ]
             )
 

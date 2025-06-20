@@ -45,17 +45,17 @@ class CalculateGroups:
 
     def _build_global_red_list_indices(self, df):
         rli_df = []
-        for group in df["group"].unique():
-            years = df.filter(pl.col("group") == group)["year"].unique()
+        for group in df["taxonomic_group"].unique():
+            years = df.filter(pl.col("taxonomic_group") == group)["year"].unique()
             for year in years:
                 group_rows_by_year = df.filter(
-                    (pl.col("year") == year) & (pl.col("group") == group)
+                    (pl.col("year") == year) & (pl.col("taxonomic_group") == group)
                 )
                 group_year_results = self._calculate_rli_for(
                     group_rows_by_year, self.number_of_repetitions
                 )
 
-                rli_df.append({**{"group": group, "year": year}, **group_year_results})
+                rli_df.append({**{"taxonomic_group": group, "year": year}, **group_year_results})
         return pl.DataFrame(rli_df)
 
     def _calculate_rli_for(self, row_df, number_of_repetitions=1):
@@ -64,8 +64,8 @@ class CalculateGroups:
             weights_for_group_and_year = self._replace_data_deficient_rows(row_df)
             rli = Calculate(weights_for_group_and_year).red_list_index()
             rlis.append(rli)
-        counts_df = row_df.select(pl.col("group").value_counts())
-        dicts = counts_df["group"].to_list()
+        counts_df = row_df.select(pl.col("taxonomic_group").value_counts())
+        dicts = counts_df["taxonomic_group"].to_list()
         group_sample_sizes = {k: v for d in dicts for k, v in d.items()}
         # Note: The numpy .mean() method calculates and returns the arithmetic mean of elements in a NumPy array
         #       as specified in Butchart et al., 2010.
@@ -74,7 +74,7 @@ class CalculateGroups:
             "qn_95": np.percentile(rlis, 95),
             "qn_05": np.percentile(rlis, 5),
             "n": number_of_repetitions,
-            "group_sample_sizes": group_sample_sizes,
+            "taxonomic_group_sample_sizes": group_sample_sizes,
         }
 
     def _replace_data_deficient_rows(self, df):

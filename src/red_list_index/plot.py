@@ -22,14 +22,14 @@ class Plot:
         plt.figure(figsize=(8, 5))
 
         # Plot each group
-        groups = rli_df["group"].unique()
+        groups = rli_df["taxonomic_group"].unique()
         for group in groups:
-            sub = rli_df[rli_df["group"] == group]
+            sub = rli_df[rli_df["taxonomic_group"] == group]
             plt.plot(sub["year"], sub["rli"], label=group, lw=0.5)  # No marker
             plt.fill_between(sub["year"], sub["qn_05"], sub["qn_95"], alpha=0.2)
         plt.xlabel("Year")
         plt.ylabel("RLI")
-        plt.title("RLI by Group Over Time")
+        plt.title("RLI by Taxonomic Group Over Time")
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         plt.tight_layout()
         plt.savefig(filename, dpi=300)

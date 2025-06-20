@@ -32,12 +32,12 @@ def calculate_aggregate_from(df_rli_extrapolated_data):
         .group_by("year")
         .agg(
             [
-                pl.lit("Aggregate").alias("group"),
+                pl.lit("Aggregate").alias("taxonomic_group"),
                 pl.mean("rli").alias("rli"),
                 pl.lit(None).alias("qn_95"),
                 pl.lit(None).alias("qn_05"),
                 pl.lit(None).alias("n"),
-                pl.lit(None).alias("group_sample_sizes"),
+                pl.lit(None).alias("taxonomic_group_sample_sizes"),
             ]
         )
     )

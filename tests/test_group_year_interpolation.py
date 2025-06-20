@@ -1,6 +1,6 @@
 import polars as pl
 
-from red_list_index.year_interpolation import YearInterpolation
+from red_list_index.group_year_interpolation import GroupYearInterpolation
 
 
 def test_interpolate_rli_for_missing_years_valid_input():
@@ -61,7 +61,7 @@ def test_interpolate_rli_for_missing_years_valid_input():
         }
     )
 
-    result = YearInterpolation.interpolate_rli_for_missing_years(rli_df).sort(
+    result = GroupYearInterpolation.interpolate_rli_for_missing_years(rli_df).sort(
         ["group", "year"]
     )
     # result = interpolate_rli_for_missing_years(rli_df).sort(["group", "year"])

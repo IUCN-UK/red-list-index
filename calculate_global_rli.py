@@ -15,7 +15,7 @@ sys.path.append(str(Path(__file__).resolve().parent / "src"))
 from red_list_index.data_frame_processor import DataFrameProcessor
 from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
-from red_list_index.year_interpolation import YearInterpolation
+from red_list_index.group_year_interpolation import GroupYearInterpolation
 
 from red_list_index.utils import (
     extrapolate_trends_for,
@@ -78,7 +78,7 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        rli_df = YearInterpolation.interpolate_rli_for_missing_years(rli_df)
+        rli_df = GroupYearInterpolation.interpolate_rli_for_missing_years(rli_df)
 
         print("[✓] Interpolate RLI for missing years")
     except Exception as e:

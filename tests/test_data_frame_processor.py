@@ -62,7 +62,8 @@ def test_invalid_schema():
     input_file = create_test_csv(data)
 
     with pytest.raises(
-        ValueError, match=r"Validation errors:\nColumn 'sis_taxon_id' must be Int64, got String"
+        ValueError,
+        match=r"Validation errors:\nColumn 'sis_taxon_id' must be Int64, got String",
     ):
         DataFrameProcessor(input_file)
 
@@ -78,7 +79,8 @@ def test_null_values():
     input_file = create_test_csv(data)
 
     with pytest.raises(
-        ValueError, match=r"Validation errors:\nColumn 'sis_taxon_id' contains 1 null value\(s\)"
+        ValueError,
+        match=r"Validation errors:\nColumn 'sis_taxon_id' contains 1 null value\(s\)",
     ):
         DataFrameProcessor(input_file)
 

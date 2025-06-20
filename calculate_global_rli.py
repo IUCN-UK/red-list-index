@@ -105,7 +105,9 @@ def main() -> None:
 
     try:
         # Ensure 'group_sample_sizes' is cast to string for CSV output
-        rli_df = rli_df.with_columns(pl.col("taxonomic_group_sample_sizes").cast(pl.Utf8))
+        rli_df = rli_df.with_columns(
+            pl.col("taxonomic_group_sample_sizes").cast(pl.Utf8)
+        )
         rli_df.write_csv(output_file)
 
         print(f"[✓] Saving results to: {output_file}")

@@ -55,7 +55,9 @@ class CalculateGroups:
                     group_rows_by_year, self.number_of_repetitions
                 )
 
-                rli_df.append({**{"taxonomic_group": group, "year": year}, **group_year_results})
+                rli_df.append(
+                    {**{"taxonomic_group": group, "year": year}, **group_year_results}
+                )
         return pl.DataFrame(rli_df)
 
     def _calculate_rli_for(self, row_df, number_of_repetitions=1):

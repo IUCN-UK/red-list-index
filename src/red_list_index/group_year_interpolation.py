@@ -1,7 +1,7 @@
 import polars as pl
 
 
-class YearInterpolation:
+class GroupYearInterpolation:
     """
     Fills in missing years for each group in the RLI DataFrame by linearly interpolating RLI values and associated columns.
 

@@ -16,10 +16,10 @@ from red_list_index.data_frame_processor import DataFrameProcessor
 from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
 from red_list_index.group_year_interpolation import GroupYearInterpolation
+from red_list_index.group_year_extrapolation import GroupYearExtrapolation
 
 from red_list_index.utils import (
-    extrapolate_trends_for,
-    calculate_aggregate_for,
+    calculate_aggregate_from,
 )
 
 
@@ -80,14 +80,21 @@ def main() -> None:
     try:
         rli_df = GroupYearInterpolation.interpolate_rli_for_missing_years(rli_df)
 
-        print("[✓] Interpolate RLI for missing years")
+        print("[✓] Interpolating RLI for missing years")
     except Exception as e:
-        print(f"[✗] Interpolate RLI for missing years - {e}")
+        print(f"[✗] Interpolating RLI for missing years - {e}")
         sys.exit(1)
 
     try:
-        rli_df_extrapolated = extrapolate_trends_for(rli_df)
-        rli_df_aggregated = calculate_aggregate_for(rli_df_extrapolated)
+        rli_df_extrapolated = GroupYearExtrapolation.extrapolate_trends_for(rli_df)
+
+        print("[✓] Exrapolating RLI to extend years")
+    except Exception as e:
+        print(f"[✗] Exrapolating RLI to extend years - {e}")
+        sys.exit(1)
+
+    try:
+        rli_df_aggregated = calculate_aggregate_from(rli_df_extrapolated)
 
         rli_df = pl.concat([rli_df, rli_df_aggregated], how="vertical")
 

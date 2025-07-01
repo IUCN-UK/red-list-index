@@ -1,6 +1,6 @@
 import polars as pl
 
-from red_list_index.utils import calculate_aggregate_from
+from red_list_index.group_year_aggregate import GroupYearAggreagate
 
 
 def test_calculate_aggregate_from_valid_input():
@@ -22,7 +22,7 @@ def test_calculate_aggregate_from_valid_input():
             "taxonomic_group_sample_sizes": [None, None, None],
         }
     )
-    result = calculate_aggregate_from(df_rli_extrapolated_data)
+    result = GroupYearAggreagate.calculate_aggregate_from(df_rli_extrapolated_data)
     assert result.shape == expected.shape, (
         f"Expected shape {expected.shape}, but got {result.shape}"
     )

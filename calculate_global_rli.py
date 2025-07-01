@@ -17,10 +17,7 @@ from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
 from red_list_index.group_year_interpolation import GroupYearInterpolation
 from red_list_index.group_year_extrapolation import GroupYearExtrapolation
-
-from red_list_index.utils import (
-    calculate_aggregate_from,
-)
+from red_list_index.group_year_aggregate import GroupYearAggreagate
 
 
 def limit_number_of_repetitions(value):
@@ -94,7 +91,9 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        rli_df_aggregated = calculate_aggregate_from(rli_df_extrapolated)
+        rli_df_aggregated = GroupYearAggreagate.calculate_aggregate_from(
+            rli_df_extrapolated
+        )
 
         rli_df = pl.concat([rli_df, rli_df_aggregated], how="vertical")
 

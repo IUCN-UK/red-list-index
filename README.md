@@ -95,6 +95,12 @@ Then, initialize the package and perform a Red List Index calculation:
 0.4
 ```
 
+## FAIR4RS Principles Statement
+
+This package is developed in alignment with the [FAIR4RS principles](https://www.nature.com/articles/s41597-022-01710-x) ([FAIR Principles for Research Software](https://doi.org/10.15497/RDA00068)), aiming to make the software Findable, Accessible, Interoperable, and Reusable for both humans and machines.
+
+If you have any questions, suggestions, or notice anything we have missed in implementing these principles, please [open an issue or discussion on GitHub](https://github.com/IUCN-UK/red-list-index/issues).
+
 ## Development
 
 Run tests with 

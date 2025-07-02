@@ -19,7 +19,7 @@ The RLIs for each taxonomic group for each year are modeled to take into account
 Data Deficient species, with a probability proportional to the number of species in non-Data
 Deficient categories for that taxonomic group. 
 
-The Python code in this repository is based on original R scripts from BirdLife International https://github.com/BirdLifeInternational/rli-codes.
+The Python code in this repository is based on R scripts originally developed by BirdLife International: https://github.com/BirdLifeInternational/rli-codes.
 
 ## Installation
 

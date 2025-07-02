@@ -13,14 +13,13 @@ A Red List Index value of 1.0 equates to all species being categorised as Least 
 
 The methodology used in this package follows the approach described by Butchart et al. (2004) [https://royalsocietypublishing.org/doi/10.1098/rstb.2004.1583; https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020383], with subsequent updates as outlined in Butchart et al. (2007) [https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000140].
 
-
-
 The RLIs for each taxonomic group for each year are modeled to take into account various sources of uncertainty: 
 
 (i) Data Deficiency: Red List categories (from Least Concern to Extinct) are assigned to all
 Data Deficient species, with a probability proportional to the number of species in non-Data
 Deficient categories for that taxonomic group. 
 
+The Python code in this repository is based on original R scripts from BirdLife International https://github.com/BirdLifeInternational/rli-codes.
 
 ## Installation
 

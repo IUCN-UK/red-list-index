@@ -8,7 +8,16 @@ def test_calculate_aggregate_from_valid_input():
         {
             "year": [2000, 2000, 2001, 2001, 2002],
             "rli": [0.5, 0.6, 0.7, 0.8, 0.9],
-            "taxonomic_group": ["Bird", "Mammal", "Bird", "Mammal", "Bird"],
+            "qn_05": [0.5, 0.6, 0.7, 0.8, 0.9],
+            "qn_95": [0.5, 0.6, 0.7, 0.8, 0.9],
+            "n": [1, 1, 1, 1, 1],
+            "taxonomic_group_sample_sizes": [
+                "Bird (1)",
+                "Mammal (1)",
+                "Bird (1)",
+                "Mammal (1)",
+                "Bird (1)",
+            ],
         }
     )
     expected = pl.DataFrame(
@@ -16,10 +25,14 @@ def test_calculate_aggregate_from_valid_input():
             "year": [2000, 2001, 2002],
             "taxonomic_group": ["Aggregate", "Aggregate", "Aggregate"],
             "rli": [0.55, 0.75, 0.9],
-            "qn_95": [None, None, None],
-            "qn_05": [None, None, None],
-            "n": [None, None, None],
-            "taxonomic_group_sample_sizes": [None, None, None],
+            "qn_95": [0.55, 0.75, 0.9],
+            "qn_05": [0.55, 0.75, 0.9],
+            "n": [1, 1, 1],
+            "taxonomic_group_sample_sizes": [
+                "Bird (1);Mammal (1)",
+                "Bird (1);Mammal (1)",
+                "Bird (1)",
+            ],
         }
     )
     result = GroupYearAggreagate.calculate_aggregate_from(df_rli_extrapolated_data)

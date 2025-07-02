@@ -34,11 +34,15 @@ class GroupYearAggreagate:
             .agg(
                 [
                     pl.lit("Aggregate").alias("taxonomic_group"),
-                    pl.mean("rli").alias("rli"),
-                    pl.lit(None).alias("qn_95"),
-                    pl.lit(None).alias("qn_05"),
-                    pl.lit(None).alias("n"),
-                    pl.lit(None).alias("taxonomic_group_sample_sizes"),
+                    pl.col("rli").mean().alias("rli"),
+                    pl.col("qn_95").mean().alias("qn_95"),
+                    pl.col("qn_05").mean().alias("qn_05"),
+                    pl.col("n").mean().round(0).cast(pl.Int64).alias("n"),
+                    pl.col("taxonomic_group_sample_sizes")
+                    .unique()
+                    .sort()
+                    .str.join(";")
+                    .alias("taxonomic_group_sample_sizes"),
                 ]
             )
         )

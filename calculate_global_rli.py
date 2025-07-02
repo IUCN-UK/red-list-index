@@ -25,7 +25,7 @@ from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
 from red_list_index.group_year_interpolation import GroupYearInterpolation
 from red_list_index.group_year_extrapolation import GroupYearExtrapolation
-from red_list_index.group_year_aggregate import GroupYearAggregate  # <--- E402 fixed
+from red_list_index.group_year_aggregate import GroupYearAggregate
 
 
 def get_project_version() -> str:

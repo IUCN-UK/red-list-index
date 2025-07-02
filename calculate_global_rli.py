@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ['polars','numpy','seaborn','matplotlib','pyarrow','tomlib']
+# dependencies = ['polars','numpy','seaborn','matplotlib','pyarrow']
 # ///
 
 

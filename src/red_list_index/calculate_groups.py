@@ -48,52 +48,84 @@ class CalculateGroups:
         for group in df["taxonomic_group"].unique():
             years = df.filter(pl.col("taxonomic_group") == group)["year"].unique()
             for year in years:
-                group_rows_by_year = df.filter(
-                    (pl.col("year") == year) & (pl.col("taxonomic_group") == group)
-                )
-
-                group_year_results = self._calculate_rli_for(
-                    group_rows_by_year, self.number_of_repetitions
-                )
-
-                rli_df.append(
-                    {**{"taxonomic_group": group, "year": year}, **group_year_results}
-                )
+                result = self._build_group_year_rli(df, group, year)
+                rli_df.append(result)
         return pl.DataFrame(rli_df)
 
-    def _calculate_rli_for(self, row_df, number_of_repetitions=1):
-        rlis = []
-        for n in range(number_of_repetitions):
-            weights_for_group_and_year = self._replace_data_deficient_rows(row_df)
-            rli = Calculate(weights_for_group_and_year).red_list_index()
-            rlis.append(rli)
+    def _build_group_year_rli(self, df, group, year):
+        group_rows_by_year = df.filter(
+            (pl.col("year") == year) & (pl.col("taxonomic_group") == group)
+        )
+        group_year_results = self._calculate_rli_for(
+            group_rows_by_year, self.number_of_repetitions
+        )
+        return {**{"taxonomic_group": group, "year": year}, **group_year_results}
 
-        # Note: The numpy .mean() method calculates and returns the arithmetic mean of elements in a NumPy array
-        #       as specified in Butchart et al., 2010.
+    def _calculate_rli_for(self, row_df, number_of_repetitions=1):
+        """Calculate the Red List Index (RLI) and related statistics for the given DataFrame."""
+        rli_collection = self._generate_rli_collection(row_df, number_of_repetitions)
+        return self._summarize_rli_collection(
+            rli_collection, number_of_repetitions, row_df
+        )
+
+    def _generate_rli_collection(self, row_df, number_of_repetitions):
+        """Generate a list of RLI values by bootstrapping."""
+        return [self._single_rli(row_df) for _ in range(number_of_repetitions)]
+
+    def _summarize_rli_collection(self, rli_collection, number_of_repetitions, row_df):
+        """Summarize the RLI collection with statistics and metadata."""
+        # The RLI (Red List Index) summary statistics are calculated as follows:
+        # - The mean RLI is computed using numpy's np.mean, which calculates the arithmetic mean as specified in Butchart et al., 2010.
+        # - The 95th and 5th percentiles (qn_95 and qn_05) are computed using np.percentile to provide uncertainty intervals.
+        # - The total number of bootstrap repetitions (n) is recorded.
+        # - The sample sizes for each taxonomic group are included for reference.
+
         return {
-            "rli": np.mean(rlis),
-            "qn_95": np.percentile(rlis, 95),
-            "qn_05": np.percentile(rlis, 5),
+            "rli": np.mean(rli_collection),
+            "qn_95": np.percentile(rli_collection, 95),
+            "qn_05": np.percentile(rli_collection, 5),
             "n": number_of_repetitions,
             "taxonomic_group_sample_sizes": self._taxonomic_group_sample_sizes_for(
                 row_df
             ),
         }
 
+    def _single_rli(self, row_df):
+        """Calculate a single RLI value for the given DataFrame, replacing data deficient rows as needed."""
+        weights_for_group_and_year = self._replace_data_deficient_rows(row_df)
+
+        return Calculate(weights_for_group_and_year).red_list_index()
+
     def _taxonomic_group_sample_sizes_for(self, row_df):
+        """Get the count of occurrences for each taxonomic_group in the input DataFrame."""
         counts_df = row_df.select(pl.col("taxonomic_group").value_counts())
 
         taxonomic_group_counts = counts_df["taxonomic_group"].to_list()
         return f"{taxonomic_group_counts[0]['taxonomic_group']} ({taxonomic_group_counts[0]['count']})"
 
     def _replace_data_deficient_rows(self, df):
+        """Replace null weights in DataFrame with random samples from valid weights."""
+        valid_weights = self._get_valid_weights(df)
+        data_deficient_count = self._get_data_deficient_count(df)
+
+        random_weights = self._sample_random_weights(
+            valid_weights, data_deficient_count
+        )
+        return valid_weights.tolist() + random_weights.tolist()
+
+    def _get_valid_weights(self, df):
+        """Return all valid (non-null) weights as a numpy array."""
         valid_weights = df.filter(pl.col("weights").is_not_null())["weights"].to_numpy()
         if valid_weights.size == 0:
             raise ValueError("No valid weights found in the DataFrame to sample from.")
+        return valid_weights
 
-        data_deficient_count = df.filter(pl.col("weights").is_null()).height
+    def _get_data_deficient_count(self, df):
+        """Return the number of rows with null weights."""
+        return df.filter(pl.col("weights").is_null()).height
 
-        random_weights = np.random.choice(
-            valid_weights, size=data_deficient_count, replace=False
-        )
-        return valid_weights.tolist() + random_weights.tolist()
+    def _sample_random_weights(self, valid_weights, count):
+        """Randomly sample 'count' weights from valid_weights (without replacement)."""
+        if count == 0:
+            return np.array([])
+        return np.random.choice(valid_weights, size=count, replace=False)

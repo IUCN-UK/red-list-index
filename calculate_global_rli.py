@@ -65,7 +65,10 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {get_project_version()}", help="Show version number and exit"
+        "--version",
+        action="version",
+        version=f"%(prog)s {get_project_version()}",
+        help="Show version number and exit",
     )
 
     args = parser.parse_args()

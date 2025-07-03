@@ -55,6 +55,9 @@ uv run calculate_global_rli.py <input_csv> <output_csv>
 
 - `-h`, `--help`: Show the help message and exit.
 - `--number_of_repetitions NUMBER_OF_REPETITIONS`: Specify the number of repetitions for the calculation (default is 1000).
+- `--plot`: Save output plot as PNG.
+- `--verbose`: Enable verbose logging.
+- `--version`: Show version number and exit.
 
 ### Example
 
@@ -66,13 +69,14 @@ This command will calculate the Global Red List Index using the data from `speci
 
 For example, running this for the `species_red_list_category_list.csv` file found in the test fixtures directory:
 ```
-➜ uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv rli_output.csv --number_of_repetitions 1000
-[✓] Processing and validating dataframe for: ./tests/fixtures/species_red_list_category_list.csv
-[✓] Building Global Red List Index DataFrame (number of repetitions: 1000)          
-[✓] Interpolate RLI for missing years
-[✓] Aggregate RLI
-[✓] Saving results to: output.csv
-[✓] Saving plot to: output.png
+➜  red-list-index git:(update-classes) uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv output.csv --number_of_repetitions 1000 --plot
+INFO: Processing and validating dataframe for: ./tests/fixtures/species_red_list_category_list.csv
+INFO: Building Global Red List Index DataFrame (repetitions: 1000)
+INFO: Interpolating RLI for missing years
+INFO: Extrapolating RLI to extend years
+INFO: Aggregated RLI
+INFO: Saved results to: output.csv
+INFO: Saved plot to: output.png
 ```
 
 ## Standalone RLI calculator use

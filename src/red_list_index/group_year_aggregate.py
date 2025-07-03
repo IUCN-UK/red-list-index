@@ -1,7 +1,7 @@
 import polars as pl
 
 
-class GroupYearAggreagate:
+class GroupYearAggregate:
     def calculate_aggregate_from(df_rli_extrapolated_data):
         """
         Aggregates Red List Index (RLI) data for each group across the full range of years.

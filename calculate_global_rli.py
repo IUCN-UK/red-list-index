@@ -20,7 +20,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 
-from red_list_index.data_frame_processor import DataFrameProcessor
+from red_list_index.group_data_frame_processor import GroupDataFrameProcessor
 from red_list_index.calculate_groups import CalculateGroups
 from red_list_index.plot import Plot
 from red_list_index.group_year_interpolation import GroupYearInterpolation
@@ -83,7 +83,7 @@ def main() -> int:
     number_of_repetitions = args.number_of_repetitions
 
     try:
-        df = DataFrameProcessor(input_file).df
+        df = GroupDataFrameProcessor(input_file).df
         logging.info(f"Processing and validating dataframe for: {input_file}")
         rli_df = CalculateGroups(df, number_of_repetitions).df
         logging.info(
@@ -108,6 +108,7 @@ def main() -> int:
             plot = Plot(rli_df)
             plot.global_rli(output_file.replace(".csv", ".png"))
             logging.info(f"Saved plot to: {output_file.replace('.csv', '.png')}")
+
         return 0
     except Exception as e:
         logging.error(f"Error: {e}")

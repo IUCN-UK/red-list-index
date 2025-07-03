@@ -90,11 +90,24 @@ class CalculateGroups:
             ),
         }
 
+
+    def extract_column_if_exists(self, df, col_name):
+        if col_name in df.columns:
+            return df[col_name].to_list()
+        else:
+            return None
+
+
     def _single_rli(self, row_df):
         """Calculate a single RLI value for the given DataFrame, replacing data deficient rows as needed."""
         weights_for_group_and_year = self._replace_data_deficient_rows(row_df)
 
-        return Calculate(weights_for_group_and_year).red_list_index()
+        pp_list = self.extract_column_if_exists(row_df, "pp")
+
+
+        if not weights_for_group_and_year:
+            raise ValueError("No valid weights available to calculate RLI.")
+        return Calculate(weights_for_group_and_year, pp_list).red_list_index()
 
     def _taxonomic_group_sample_sizes_for(self, row_df):
         """Get the count of occurrences for each taxonomic_group in the input DataFrame."""

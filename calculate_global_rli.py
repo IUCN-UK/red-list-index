@@ -55,7 +55,7 @@ def main() -> int:
         "--number_of_repetitions",
         type=limit_number_of_repetitions,
         default=1000,
-        help="Number of repetitions (default: 1000, maximum: 10000, minimum: 1)",
+        help="Number of repetitions (default: 1000, minimum: 1, maximum: 10000)",
     )
     parser.add_argument(
         "--plot", action="store_true", default=False, help="Save output plot as PNG"
@@ -65,7 +65,7 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {get_project_version()}"
+        "--version", action="version", version=f"%(prog)s {get_project_version()}", help="Show version number and exit"
     )
 
     args = parser.parse_args()

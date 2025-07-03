@@ -75,7 +75,7 @@ class CalculateGroups:
     def _summarize_rli_collection(self, rli_collection, number_of_repetitions, row_df):
         """Summarize the RLI collection with statistics and metadata."""
         # The RLI (Red List Index) summary statistics are calculated as follows:
-        # - The mean RLI is computed using numpy's np.mean, which calculates the arithmetic mean as described in Butchart et al., 2010.
+        # - The mean RLI is computed using numpy's np.mean, which calculates the arithmetic mean as specified in Butchart et al., 2010.
         # - The 95th and 5th percentiles (qn_95 and qn_05) are computed using np.percentile to provide uncertainty intervals.
         # - The total number of bootstrap repetitions (n) is recorded.
         # - The sample sizes for each taxonomic group are included for reference.

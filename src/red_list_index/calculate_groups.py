@@ -63,10 +63,17 @@ class CalculateGroups:
 
     def _calculate_rli_for(self, row_df, number_of_repetitions=1):
         """Calculate the Red List Index (RLI) and related statistics for the given DataFrame."""
-        rli_collection = [
-            self._single_rli(row_df) for _ in range(number_of_repetitions)
-        ]
+        rli_collection = self._generate_rli_collection(row_df, number_of_repetitions)
+        return self._summarize_rli_collection(
+            rli_collection, number_of_repetitions, row_df
+        )
 
+    def _generate_rli_collection(self, row_df, number_of_repetitions):
+        """Generate a list of RLI values by bootstrapping."""
+        return [self._single_rli(row_df) for _ in range(number_of_repetitions)]
+
+    def _summarize_rli_collection(self, rli_collection, number_of_repetitions, row_df):
+        """Summarize the RLI collection with statistics and metadata."""
         return {
             "rli": np.mean(rli_collection),
             "qn_95": np.percentile(rli_collection, 95),
@@ -94,6 +101,7 @@ class CalculateGroups:
         """Replace null weights in DataFrame with random samples from valid weights."""
         valid_weights = self._get_valid_weights(df)
         data_deficient_count = self._get_data_deficient_count(df)
+
         random_weights = self._sample_random_weights(
             valid_weights, data_deficient_count
         )

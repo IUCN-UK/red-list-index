@@ -29,6 +29,7 @@ class Calculate:
           )
 
         else:
+          print('pp is not None, using it for calculation')
           calculated_red_list_index = 1 - (
               sum_of_weights / (weight_of_extinct * sum(self.pp))
           )

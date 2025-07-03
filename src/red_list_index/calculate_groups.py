@@ -139,6 +139,22 @@ class CalculateGroups:
 
     def _sample_random_weights(self, valid_weights, count):
         """Randomly sample 'count' weights from valid_weights (without replacement)."""
+
+
+        print(f"Sampling {count} random weights from valid weights {len(valid_weights)}.")
+
+
         if count == 0:
             return np.array([])
-        return np.random.choice(valid_weights, size=count, replace=False)
+        
+        if len(valid_weights) == 0:
+            return np.array([])
+
+
+        # If there are fewer valid weights than the count, we allow replacement.
+        if len(valid_weights) < count:
+            replace_valid_weights = True
+        else:
+            replace_valid_weights = False
+
+        return np.random.choice(valid_weights, size=count, replace=replace_valid_weights)

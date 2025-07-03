@@ -93,7 +93,6 @@ def main() -> int:
 
         unique_filters = joined_df.select(["filter_type", "filter"]).unique()
 
-        print(unique_filters)
 
         for row in unique_filters.iter_rows(named=True):
             current_filter_type = row["filter_type"]

@@ -32,3 +32,6 @@ jobs:
 
       - name: Run ruff check
         run: uv run ruff check
+
+      - name: Run ty check
+        run: uv run ty check

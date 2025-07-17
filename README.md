@@ -112,7 +112,7 @@ Run tests with
 uv run pytest
 ```
 
-Run the Ruff formatter on all directories and files
+Run the Ruff linter and code formatter on all directories and files
 ```
 uv run ruff format
 ```
@@ -120,6 +120,11 @@ uv run ruff format
 Run Ruff check
 ```
 uv run ruff check
+```
+
+Run the ty Python type checker on all directories and files
+```
+uv run ty check
 ```
 
 

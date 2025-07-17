@@ -24,4 +24,5 @@ build-backend = "hatchling.build"
 dev = [
     "pytest>=8.4.0",
     "ruff>=0.11.13",
+    "ty>=0.0.1a14",
 ]

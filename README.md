@@ -69,7 +69,7 @@ This command will calculate the Global Red List Index using the data from `speci
 
 For example, running this for the `species_red_list_category_list.csv` file found in the test fixtures directory:
 ```
-➜  red-list-index git:(update-classes) uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv output.csv --number_of_repetitions 1000 --plot
+➜ uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv output.csv --number_of_repetitions 1000 --plot
 INFO: Processing and validating dataframe for: ./tests/fixtures/species_red_list_category_list.csv
 INFO: Building Global Red List Index DataFrame (repetitions: 1000)
 INFO: Interpolating RLI for missing years

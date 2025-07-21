@@ -58,3 +58,4 @@ def test_init_validation_with_non_integer_value():
         )
     except ValueError as e:
         assert "Non-integer value found at index 1" in str(e)
+

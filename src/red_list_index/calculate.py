@@ -31,8 +31,7 @@ class Calculate:
 
 
 def _validate_category_weights(category_weights, weight_of_extinct):
-    # Validate category_weights input
-    if not category_weights or len(category_weights) == 0:
+    if not category_weights:
         raise ValueError("category_weights cannot be empty.")
 
     for index, weight in enumerate(category_weights):

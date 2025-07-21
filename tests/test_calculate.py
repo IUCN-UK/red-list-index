@@ -7,15 +7,6 @@ def test_red_list_index_basic():
     assert result == 0.4
 
 
-# def test_red_list_index_empty_weights():
-#     calc = Calculate([])
-#     try:
-#         calc.red_list_index()
-#         assert False, "Should raise a ZeroDivisionError for an empty list"
-#     except ZeroDivisionError:
-#         pass
-
-
 def test_init_validation_with_valid_weights():
     calc = Calculate([1, 2, 3, 4, 5])
     assert calc.category_weights == [1, 2, 3, 4, 5]

@@ -69,7 +69,8 @@ This command will calculate the Global Red List Index using the data from `speci
 
 For example, running this for the `species_red_list_category_list.csv` file found in the test fixtures directory:
 ```
-➜ uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv output.csv --number_of_repetitions 1000 --plot
+➜ uv run calculate_global_rli.py ./tests/fixtures/species_red_list_category_list.csv output.csv --number_of_repetitions 1000 --plot --duration
+
 INFO: Processing and validating dataframe for: ./tests/fixtures/species_red_list_category_list.csv
 INFO: Building Global Red List Index DataFrame (repetitions: 1000)
 INFO: Interpolating RLI for missing years
@@ -77,6 +78,7 @@ INFO: Extrapolating RLI to extend years
 INFO: Aggregated RLI
 INFO: Saved results to: output.csv
 INFO: Saved plot to: output.png
+INFO: Total execution time: 11.50 seconds
 ```
 
 ## Standalone RLI calculator use

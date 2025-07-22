@@ -54,7 +54,6 @@ class CalculateGroups:
         )
 
     async def _build_global_red_list_indices(self, df):
-        rli_df = []
         tasks = []
         for group in df["taxonomic_group"].unique():
             years = df.filter(pl.col("taxonomic_group") == group)["year"].unique()

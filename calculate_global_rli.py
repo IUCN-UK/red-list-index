@@ -118,14 +118,22 @@ def main() -> int:
             logging.info(f"Saved plot to: {output_file.replace('.csv', '.png')}")
         # Show duration if requested
         if args.duration:
-            elapsed = time.time() - start_time
+            if start_time is not None:
+                elapsed = time.time() - start_time
+            else:
+                elapsed = None
+
             logging.info(f"Total execution time: {elapsed:.2f} seconds")
         return 0
     except Exception as e:
         logging.error(f"Error: {e}")
         # Optionally still show duration on error
         if args.duration:
-            elapsed = time.time() - start_time
+            if start_time is not None:
+                elapsed = time.time() - start_time
+            else:
+                elapsed = None
+
             logging.info(f"Total execution time: {elapsed:.2f} seconds")
         return 1
 

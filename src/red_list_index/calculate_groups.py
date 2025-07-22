@@ -1,5 +1,6 @@
 import polars as pl
 import numpy as np
+import asyncio
 
 from red_list_index.calculate import Calculate
 
@@ -41,16 +42,27 @@ class CalculateGroups:
 
     def __init__(self, df, number_of_repetitions=1):
         self.number_of_repetitions = number_of_repetitions
-        self.df = self._build_global_red_list_indices(df)
+        # Run the async method synchronously at init
+        self.df = asyncio.run(self._build_global_red_list_indices(df))
 
-    def _build_global_red_list_indices(self, df):
+    async def _build_group_year_rli_async(self, df, group, year):
+        # If _build_group_year_rli is synchronous, wrap it in a thread pool
+        # Otherwise, just await if you have an async implementation
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None, self._build_group_year_rli, df, group, year
+        )
+
+    async def _build_global_red_list_indices(self, df):
         rli_df = []
+        tasks = []
         for group in df["taxonomic_group"].unique():
             years = df.filter(pl.col("taxonomic_group") == group)["year"].unique()
             for year in years:
-                result = self._build_group_year_rli(df, group, year)
-                rli_df.append(result)
-        return pl.DataFrame(rli_df)
+                # Schedule async execution
+                tasks.append(self._build_group_year_rli_async(df, group, year))
+        results = await asyncio.gather(*tasks)
+        return pl.DataFrame(results)
 
     def _build_group_year_rli(self, df, group, year):
         group_rows_by_year = df.filter(

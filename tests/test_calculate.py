@@ -1,19 +1,8 @@
 from red_list_index.calculate import Calculate
+from red_list_index.constants import RED_LIST_CATEGORY_WEIGHTS
+
 import polars as pl
 
-RED_LIST_CATEGORY_WEIGHTS = {
-    "LC": 0,
-    "NT": 1,
-    "VU": 2,
-    "EN": 3,
-    "CR": 4,
-    "RE": 5,
-    "CR(PE)": 5,
-    "CR(PEW)": 5,
-    "EW": 5,
-    "EX": 5,
-    "DD": None,
-}
 
 CSV_PATH = "tests/fixtures/species_red_list_category_list.csv"
 
@@ -26,6 +15,7 @@ def test_calculate_red_list_index_basic():
 
 def test_calculate_red_list_index_birds_2024():
     weighted_df = get_weighted_red_list(taxonomic_group="Bird", year=2024)
+
     calc = Calculate(weighted_df["weights"].to_list())
     result = calc.red_list_index()
     # Note: This RLI value will differ from the final calculation for 2024 Birds,

@@ -13,6 +13,7 @@ import logging
 import tomllib
 import polars as pl
 import sys
+import time
 from pathlib import Path
 
 
@@ -63,12 +64,17 @@ def main() -> int:
     parser.add_argument(
         "--verbose", action="store_true", default=False, help="Enable verbose logging"
     )
-
     parser.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {get_project_version()}",
         help="Show version number and exit",
+    )
+    parser.add_argument(
+        "--duration",
+        action="store_true",
+        default=False,
+        help="Display execution time at end",
     )
 
     args = parser.parse_args()
@@ -77,6 +83,8 @@ def main() -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s: %(message)s",
     )
+
+    start_time = time.time() if args.duration else None
 
     input_file = args.input_csv
     output_file = args.output_csv
@@ -108,9 +116,17 @@ def main() -> int:
             plot = Plot(rli_df)
             plot.global_rli(output_file.replace(".csv", ".png"))
             logging.info(f"Saved plot to: {output_file.replace('.csv', '.png')}")
+        # Show duration if requested
+        if args.duration:
+            elapsed = time.time() - start_time
+            logging.info(f"Total execution time: {elapsed:.2f} seconds")
         return 0
     except Exception as e:
         logging.error(f"Error: {e}")
+        # Optionally still show duration on error
+        if args.duration:
+            elapsed = time.time() - start_time
+            logging.info(f"Total execution time: {elapsed:.2f} seconds")
         return 1
 
 

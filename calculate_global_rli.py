@@ -116,7 +116,6 @@ def main() -> int:
             plot = Plot(rli_df)
             plot.global_rli(output_file.replace(".csv", ".png"))
             logging.info(f"Saved plot to: {output_file.replace('.csv', '.png')}")
-        # Show duration if requested
         if args.duration:
             if start_time is not None:
                 elapsed = time.time() - start_time
@@ -127,7 +126,6 @@ def main() -> int:
         return 0
     except Exception as e:
         logging.error(f"Error: {e}")
-        # Optionally still show duration on error
         if args.duration:
             if start_time is not None:
                 elapsed = time.time() - start_time
